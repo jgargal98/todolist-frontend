@@ -1,24 +1,10 @@
 # ==========================================
-# 1. ESPECÍFICO DE .NET (Backend)
-# ==========================================
-bin/
-obj/
-# Archivos de configuración local y secretos
-appsettings.Development.json
-user.secrets.json
-# Archivos de Visual Studio / VS Code
-.vs/
-.vscode/
-*.user
-*.suo
-*.sln.dotsettings
-
-# ==========================================
-# 2. ESPECÍFICO DE ANGULAR (Frontend)
+# ESPECÍFICO DE ANGULAR (Frontend)
 # ==========================================
 node_modules/
 dist/
 .angular/
+.vscode/
 bin/
 obj/
 data-db/
@@ -29,14 +15,6 @@ yarn-error.log*
 # Resultados de tests
 /coverage
 /.nyc_output
-
-# ==========================================
-# 3. BASE DE DATOS Y DOCKER
-# ==========================================
-# ¡MUY IMPORTANTE! Si usas una carpeta local para los datos de SQL Server
-/sql_data/
-*.mdf
-*.ldf
 
 # ==========================================
 # 4. SISTEMA OPERATIVO Y OTROS
