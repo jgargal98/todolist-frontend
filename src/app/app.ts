@@ -5,7 +5,15 @@ import { CommonModule } from '@angular/common';
   selector: 'app-root',
   standalone: true,
   imports: [CommonModule],
-  template: ``,
+  template: `
+    <div class="p-10 border-4 border-dashed border-blue-500 text-center">
+      <h1 class="text-3xl font-bold text-gray-800">ToDo list for Embrace - by jgargal</h1>
+      <p class="mt-4 text-xl">{{ data() || 'Conectando...' }}</p>
+      @if (error()) {
+        <p class="text-red-500 mt-2">{{ error() }}</p>
+      }
+    </div>
+  `,
 })
 export class App implements OnInit {
   // <-- Clase "App"
