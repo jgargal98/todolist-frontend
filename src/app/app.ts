@@ -22,7 +22,7 @@ export class App implements OnInit {
 
   async ngOnInit() {
     try {
-      const res = await fetch('https://todolist-jgg.azurewebsites.net/api/helloworld');
+      const res = await fetch('http://localhost:5124/api/helloworld');
       if (!res.ok) throw new Error('Fallo en API');
       const text = await res.text();
       this.data.set(text);
