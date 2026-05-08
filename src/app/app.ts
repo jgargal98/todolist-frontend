@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   template: `
     <div class="p-10 border-4 border-dashed border-blue-500 text-center">
       <h1 class="text-3xl font-bold text-gray-800">ToDo list for Embrace - by jgargal</h1>
-      <p class="mt-4 text-xl">{{ data() || 'Conectando...' }}</p>
+      <p class="mt-4 text-xl">{{ data() || 'Connecting...' }}</p>
       @if (error()) {
         <p class="text-red-500 mt-2">{{ error() }}</p>
       }
@@ -16,14 +16,13 @@ import { CommonModule } from '@angular/common';
   `,
 })
 export class App implements OnInit {
-  // <-- Clase "App"
   data = signal('');
   error = signal('');
 
   async ngOnInit() {
     try {
       const res = await fetch('http://localhost:5124/api/helloworld');
-      if (!res.ok) throw new Error('Fallo en API');
+      if (!res.ok) throw new Error('API Failure');
       const text = await res.text();
       this.data.set(text);
     } catch (e: any) {
