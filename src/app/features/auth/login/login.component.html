@@ -52,6 +52,7 @@
       <p-button
         type="submit"
         [disabled]="loginForm.invalid"
+        [loading]="loading()"
         label="Sign In"
         [fluid]="true"
       />

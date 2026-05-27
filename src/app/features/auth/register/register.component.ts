@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,13 +8,17 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { Store } from '@ngxs/store';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { Register } from '../../../store/auth/auth.actions';
+import { AuthState } from '../../../store/auth/auth.state';
 
 const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
 
+/** Cross-field validator that ensures password and confirmPassword match. */
 function passwordMatchValidator(
   control: AbstractControl,
 ): ValidationErrors | null {
@@ -44,9 +48,15 @@ function passwordMatchValidator(
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
+  private readonly fb = inject(FormBuilder);
+  private readonly store = inject(Store);
+
   readonly registerForm: FormGroup;
 
-  constructor(private readonly fb: FormBuilder) {
+  /** Reactive signal reflecting the loading state of the auth store. */
+  readonly loading = this.store.selectSignal(AuthState.loading);
+
+  constructor() {
     this.registerForm = this.fb.nonNullable.group(
       {
         email: ['', [Validators.required, Validators.email]],
@@ -68,10 +78,11 @@ export class RegisterComponent {
     return this.registerForm.controls;
   }
 
+  /** Validates the form and dispatches the Register action to the store. */
   onSubmit(): void {
     if (this.registerForm.invalid) {
       return;
     }
-    // TODO: Dispatch action in next phase
+    this.store.dispatch(new Register(this.registerForm.value));
   }
 }

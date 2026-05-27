@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideStore } from '@ngxs/store';
+import { AuthState } from '../../../store/auth/auth.state';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
@@ -8,7 +10,10 @@ describe('LoginComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        provideStore([AuthState]),
+      ],
     }).compileComponents();
 
     const fixture = TestBed.createComponent(LoginComponent);
@@ -89,18 +94,20 @@ describe('LoginComponent', () => {
   });
 
   describe('onSubmit', () => {
-    it('should not log when the form is invalid', () => {
-      const consoleSpy = vi.spyOn(console, 'log');
+    it('should not dispatch when the form is invalid', () => {
+      const dispatchSpy = vi.spyOn(component['store'], 'dispatch');
       component.loginForm.get('email')!.setValue('bad-email');
       component.loginForm.get('password')!.setValue('ab');
       component.onSubmit();
-      expect(consoleSpy).not.toHaveBeenCalled();
+      expect(dispatchSpy).not.toHaveBeenCalled();
     });
 
-    it('should allow submit when the form is valid', () => {
+    it('should dispatch Login when the form is valid', () => {
+      const dispatchSpy = vi.spyOn(component['store'], 'dispatch');
       setValue('email', 'user@example.com');
       setValue('password', 'Pass12');
-      expect(() => component.onSubmit()).not.toThrow();
+      component.onSubmit();
+      expect(dispatchSpy).toHaveBeenCalled();
     });
   });
 });
