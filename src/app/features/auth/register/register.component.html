@@ -11,6 +11,7 @@
         id="email"
         type="email"
         pInputText
+        [fluid]="true"
         formControlName="email"
         autocomplete="email"
         placeholder="you@example.com"
@@ -31,10 +32,9 @@
         formControlName="password"
         [feedback]="false"
         [toggleMask]="true"
+        [fluid]="true"
         autocomplete="new-password"
         placeholder="Min. 6 characters"
-        [style]="{ width: '100%' }"
-        inputStyleClass="w-full"
       />
 
       @if (f['password'].touched && f['password'].invalid) {
@@ -55,10 +55,9 @@
         formControlName="confirmPassword"
         [feedback]="false"
         [toggleMask]="true"
+        [fluid]="true"
         autocomplete="new-password"
         placeholder="Re-enter your password"
-        [style]="{ width: '100%' }"
-        inputStyleClass="w-full"
       />
 
       @if (f['confirmPassword'].touched && f['confirmPassword'].invalid) {
@@ -75,7 +74,7 @@
         type="submit"
         [disabled]="registerForm.invalid"
         label="Sign Up"
-        [style]="{ width: '100%' }"
+        [fluid]="true"
       />
     </form>
   </ng-template>
