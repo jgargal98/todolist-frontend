@@ -1,97 +1,89 @@
-<p-card styleClass="auth-card">
+<p-card [style]="{ maxWidth: '28rem', width: '100%' }">
   <ng-template pTemplate="title">
-    <div class="text-center">
-      <h2 class="m-0 title-font">Create Account</h2>
-      <p class="mt-2 text-sm text-color-secondary">Sign up to get started</p>
-    </div>
+    <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">Create Account</h2>
+    <p style="margin: 0.5rem 0 0 0; font-size: 0.875rem; color: var(--p-text-muted-color);">Sign up to get started</p>
   </ng-template>
 
   <ng-template pTemplate="content">
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <div class="field mb-4">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          pInputText
-          formControlName="email"
-          autocomplete="email"
-          placeholder="you@example.com"
-          class="w-full"
-        />
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" [style]="{ display: 'flex', flexDirection: 'column', gap: '1rem' }">
+      <label for="email" style="font-weight: 500; font-size: 0.875rem;">Email</label>
+      <input
+        id="email"
+        type="email"
+        pInputText
+        formControlName="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+      />
 
-        @if (email.touched || email.dirty) {
-          @if (email.hasError('required')) {
-            <small class="error">Email is required.</small>
-          }
-          @if (email.hasError('email')) {
-            <small class="error">Please enter a valid email address.</small>
-          }
+      @if (f['email'].touched && f['email'].invalid) {
+        @if (f['email'].hasError('required')) {
+          <small style="color: var(--p-red-400);">Email is required.</small>
         }
-      </div>
-
-      <div class="field mb-4">
-        <label for="password">Password</label>
-        <p-password
-          id="password"
-          formControlName="password"
-          [feedback]="false"
-          [toggleMask]="true"
-          autocomplete="new-password"
-          placeholder="Min. 6 characters"
-          styleClass="w-full"
-        />
-
-        @if (password.touched || password.dirty) {
-          @if (password.hasError('required')) {
-            <small class="error">Password is required.</small>
-          }
-          @if (password.hasError('minlength')) {
-            <small class="error">Password must be at least 6 characters long.</small>
-          }
-          @if (password.hasError('pattern')) {
-            <small class="error">Password must contain at least one uppercase letter, one lowercase letter, and one digit.</small>
-          }
+        @if (f['email'].hasError('email')) {
+          <small style="color: var(--p-red-400);">Please enter a valid email address.</small>
         }
-      </div>
+      }
 
-      <div class="field mb-4">
-        <label for="confirmPassword">Confirm Password</label>
-        <p-password
-          id="confirmPassword"
-          formControlName="confirmPassword"
-          [feedback]="false"
-          [toggleMask]="true"
-          autocomplete="new-password"
-          placeholder="Re-enter your password"
-          styleClass="w-full"
-        />
+      <label for="password" style="font-weight: 500; font-size: 0.875rem;">Password</label>
+      <p-password
+        id="password"
+        formControlName="password"
+        [feedback]="false"
+        [toggleMask]="true"
+        autocomplete="new-password"
+        placeholder="Min. 6 characters"
+        [style]="{ width: '100%' }"
+        inputStyleClass="w-full"
+      />
 
-        @if (confirmPassword.touched || confirmPassword.dirty) {
-          @if (confirmPassword.hasError('required')) {
-            <small class="error">Please confirm your password.</small>
-          }
+      @if (f['password'].touched && f['password'].invalid) {
+        @if (f['password'].hasError('required')) {
+          <small style="color: var(--p-red-400);">Password is required.</small>
         }
-
-        @if (registerForm.hasError('passwordMismatch') && confirmPassword.touched && confirmPassword.dirty) {
-          <small class="error">Passwords do not match.</small>
+        @if (f['password'].hasError('minlength')) {
+          <small style="color: var(--p-red-400);">Password must be at least 6 characters long.</small>
         }
-      </div>
+        @if (f['password'].hasError('pattern')) {
+          <small style="color: var(--p-red-400);">Password must contain at least one uppercase letter, one lowercase letter, and one digit.</small>
+        }
+      }
+
+      <label for="confirmPassword" style="font-weight: 500; font-size: 0.875rem;">Confirm Password</label>
+      <p-password
+        id="confirmPassword"
+        formControlName="confirmPassword"
+        [feedback]="false"
+        [toggleMask]="true"
+        autocomplete="new-password"
+        placeholder="Re-enter your password"
+        [style]="{ width: '100%' }"
+        inputStyleClass="w-full"
+      />
+
+      @if (f['confirmPassword'].touched && f['confirmPassword'].invalid) {
+        @if (f['confirmPassword'].hasError('required')) {
+          <small style="color: var(--p-red-400);">Please confirm your password.</small>
+        }
+      }
+
+      @if (registerForm.hasError('passwordMismatch') && f['confirmPassword'].touched && f['confirmPassword'].dirty) {
+        <small style="color: var(--p-red-400);">Passwords do not match.</small>
+      }
 
       <p-button
         type="submit"
         [disabled]="registerForm.invalid"
         label="Sign Up"
         [style]="{ width: '100%' }"
-        styleClass="p-3 font-bold"
       />
     </form>
   </ng-template>
 
   <ng-template pTemplate="footer">
-    <div class="text-center">
-      <span class="text-sm text-color-secondary">Already have an account? </span>
-      <a routerLink="/login" class="nav-link">Sign In</a>
-    </div>
+    <p style="margin: 0; font-size: 0.875rem;">
+      <span style="color: var(--p-text-muted-color);">Already have an account? </span>
+      <a routerLink="/login" style="color: var(--p-primary-color); font-weight: 700; text-decoration: none;">Sign In</a>
+    </p>
   </ng-template>
 </p-card>

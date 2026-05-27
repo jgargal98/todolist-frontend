@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
@@ -12,19 +11,14 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 
-/**
- * Regex enforcing API password rules:
- * - Minimum 6 characters
- * - At least one uppercase letter
- * - At least one lowercase letter
- * - At least one digit
- */
 const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
 
 @Component({
   selector: 'app-login',
+  host: {
+    style: 'display: flex; align-items: center; justify-content: center; min-height: 100vh;',
+  },
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     RouterModule,
     CardModule,
@@ -33,10 +27,8 @@ const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
     ButtonModule,
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  /** Reactive form group for the login form. */
   readonly loginForm: FormGroup;
 
   constructor(private readonly fb: FormBuilder) {
@@ -53,25 +45,14 @@ export class LoginComponent {
     });
   }
 
-  /** Convenience getter for the email form control. */
-  protected get email() {
-    return this.loginForm.get('email')!;
+  get f() {
+    return this.loginForm.controls;
   }
 
-  /** Convenience getter for the password form control. */
-  protected get password() {
-    return this.loginForm.get('password')!;
-  }
-
-  /**
-   * Handles form submission.
-   * Logs the form value to the console when the form is valid.
-   */
   onSubmit(): void {
     if (this.loginForm.invalid) {
       return;
     }
-
     console.log('Login submitted:', this.loginForm.value);
   }
 }
