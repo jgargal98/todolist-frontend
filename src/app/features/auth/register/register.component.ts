@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 
@@ -47,88 +48,13 @@ export function passwordMatchValidator(
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
+    CardModule,
     InputTextModule,
     PasswordModule,
     ButtonModule,
   ],
   templateUrl: './register.component.html',
-  styles: [
-    `
-      :host {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-      }
-
-      .register-card {
-        background: var(--p-surface-card);
-        padding: 2.5rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
-        width: 100%;
-        max-width: 400px;
-      }
-
-      .register-card h2 {
-        margin: 0 0 1.5rem;
-        text-align: center;
-        font-weight: 600;
-      }
-
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-        margin-bottom: 1.25rem;
-      }
-
-      .field label {
-        font-weight: 500;
-        font-size: 0.875rem;
-      }
-
-      .error {
-        color: var(--p-red-400);
-        font-size: 0.75rem;
-        line-height: 1.25;
-        margin-top: 0.25rem;
-      }
-
-      .submit-btn {
-        width: 100%;
-        margin-top: 0.5rem;
-      }
-
-      .mt-3 {
-        margin-top: 1rem;
-      }
-
-      .text-center {
-        text-align: center;
-      }
-
-      .text-sm {
-        font-size: 0.875rem;
-      }
-
-      .text-primary {
-        color: var(--p-primary-color);
-      }
-
-      .no-underline {
-        text-decoration: none;
-      }
-
-      .font-semibold {
-        font-weight: 600;
-      }
-
-      .cursor-pointer {
-        cursor: pointer;
-      }
-    `,
-  ],
+  styleUrl: './register.component.css',
 })
 export class RegisterComponent {
   /** Reactive form group for the registration form. */

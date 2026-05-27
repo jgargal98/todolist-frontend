@@ -1,0 +1,117 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #0f172a;
+}
+
+.auth-card {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+}
+
+:host ::ng-deep .auth-card .p-card {
+  background: #1e293b;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+:host ::ng-deep .auth-card .p-card-body {
+  padding: 2.5rem;
+}
+
+:host ::ng-deep .auth-card .p-card-content {
+  padding: 0;
+}
+
+:host ::ng-deep .auth-card .p-card-footer {
+  padding: 1.5rem 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* --- Full-width inputs --- */
+
+.w-full {
+  width: 100%;
+}
+
+:host ::ng-deep .p-password {
+  width: 100%;
+  display: flex;
+}
+
+:host ::ng-deep .p-password .p-inputtext {
+  width: 100%;
+}
+
+:host ::ng-deep .p-inputtext {
+  width: 100%;
+}
+
+/* --- Form field layout --- */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field label {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--p-text-muted-color, #94a3b8);
+}
+
+.error {
+  color: var(--p-red-400, #f87171);
+  font-size: 0.75rem;
+  line-height: 1.25;
+  margin-top: 0.25rem;
+}
+
+/* --- Spacing utilities --- */
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+/* --- Typography utilities --- */
+
+.text-center {
+  text-align: center;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.title-font {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 2rem;
+}
+
+.text-color-secondary {
+  color: var(--p-text-muted-color, #94a3b8);
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.nav-link {
+  color: var(--p-primary-color, #60a5fa);
+  font-weight: 600;
+  text-decoration: none;
+}
