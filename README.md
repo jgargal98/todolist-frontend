@@ -1,78 +1,59 @@
-# Project Status: Notes Application (Full Stack)
+# Frontend
 
-Technical summary of the current infrastructure, system configuration, and development progress for the Notes application.
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
 
-## System Architecture
+## Development server
 
-The system utilizes a decoupled cloud-based architecture:
+To start a local development server, run:
 
-- Framework: .NET 10 Web API (LTS).
-- Architecture: Clean Architecture (Domain, Application, Infrastructure, API).
-- Database: Azure SQL Database (Relational).
-- Hosting: Azure App Service (F1 - Free Plan).
-- Frontend: Azure Static Web App.
-- Deployment: Integrated CI/CD via GitHub Actions.
-
-## Implemented Configurations
-
-### 1. Data Layer (Azure SQL)
-
-- Instance: Logical SQL Server provisioned in a region with available quota.
-- Network Security:
-    - Firewall enabled for internal Azure service communication.
-    - Local IP whitelisting configured for development environment access.
-- Access: Configured via SQL Server Authentication.
-
-### 2. Application Layer (App Service)
-
-- Platform: App Service running on a .NET-optimized environment.
-- Secret Management: Connection string injection implemented via Azure Environment Variables (ConnectionStrings\_\_DefaultConnection).
-- Code Security: The appsettings.json file in the repository contains no sensitive credentials, delegating real authentication to the Azure Portal configuration.
-
-### 3. Deployment Workflow (CI/CD)
-
-- Repository: GitHub ([jgargal/TodoList](https://github.com/jgargal98/todolist)).
-- Automation: A production-ready workflow is established where every push to the main branch triggers a GitHub Action to build, test, and deploy the code directly to the Azure production environment.
-
-## System Design and Visualization
-
-To ensure scalability and maintainability, the project follows strict architectural and data modeling standards.
-
-### File Structure and Clean Architecture
-
-The following structure demonstrates the separation of concerns. The Domain layer remains independent, while Infrastructure handles data persistence and Application manages business logic and DTO mapping.
-
-```text
-todolist/
-├── .github/workflows/          # CI/CD Pipelines (Backend & Frontend)
-├── backend/
-│   ├── TodoList.API/           # Entry point, Controllers, and Program.cs
-│   ├── TodoList.Application/   # DTOs, Interfaces, Mappings, and Services
-│   ├── TodoList.Domain/        # Entities and Repository Interfaces
-│   └── TodoList.Infrastructure/# Data Context, Repositories, and Migrations
-│
-│
-└── frontend/                   # Angular front end
+```bash
+ng serve
 ```
 
-### Data Model (Entity Relationship Diagram)
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-The database schema is designed to handle user authentication and relational note management efficiently. This diagram illustrates the core entities and their relationships within the Azure SQL instance.
+## Code scaffolding
 
-![Entity Relationship Diagram](ToDo-Schema.png)
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
 
-## Recent Development Progress
+```bash
+ng generate component component-name
+```
 
-The following critical backend milestones have been achieved:
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
 
-- Clean Architecture Implementation: Structured the solution into Domain, Application, Infrastructure, and API projects.
-- DTO Mapping: Integrated AutoMapper to decouple domain entities from API responses, ensuring secure data transfer and abstraction.
-- Repository Pattern: Established the foundation for data access through interfaces in the Domain layer and implementations in the Infrastructure layer.
+```bash
+ng generate --help
+```
 
-## Current Status
+## Building
 
-- Backend (API): Fully operational. Deployed on Azure App Service using .NET 10 LTS. The API handles database migrations automatically via the DbInitializer on startup.
-- Frontend: Fully deployed. Hosted as an Azure Static Web App, communicating with the production API endpoint.
-- Connectivity: Link between App Service and SQL Database verified through environment variables.
-- Codebase: Repository synchronized and hardened against credential leaks.
-- Database: Schema is up to date and provisioned on Azure SQL.
+To build the project run:
+
+```bash
+ng build
+```
+
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+
+```bash
+ng test
+```
+
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
