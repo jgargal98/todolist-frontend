@@ -39,24 +39,10 @@
           <small class="error">Password is required.</small>
         }
         @if (password.hasError('minlength')) {
-          <small class="error"
-            >Password must be at least 6 characters long.</small
-          >
+          <small class="error">Password must be at least 6 characters long.</small>
         }
-        @if (password.hasError('uppercase')) {
-          <small class="error"
-            >Password must contain at least one uppercase letter.</small
-          >
-        }
-        @if (password.hasError('lowercase')) {
-          <small class="error"
-            >Password must contain at least one lowercase letter.</small
-          >
-        }
-        @if (password.hasError('digit')) {
-          <small class="error"
-            >Password must contain at least one digit.</small
-          >
+        @if (password.hasError('pattern')) {
+          <small class="error">Password must contain at least one uppercase letter, one lowercase letter, and one digit.</small>
         }
       }
     </div>
@@ -68,4 +54,9 @@
       label="Login"
     />
   </form>
+
+  <div class="mt-3 text-center">
+    <span class="text-sm">Don't have an account yet? </span>
+    <a routerLink="/register" class="text-primary no-underline font-semibold cursor-pointer">Sign Up</a>
+  </div>
 </div>

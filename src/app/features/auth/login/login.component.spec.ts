@@ -1,7 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { PasswordModule } from 'primeng/password';
+import { provideRouter } from '@angular/router';
 import { LoginComponent } from './login.component';
 
 describe('LoginComponent', () => {
@@ -9,7 +7,8 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoginComponent, InputTextModule, PasswordModule, ButtonModule],
+      imports: [LoginComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     const fixture = TestBed.createComponent(LoginComponent);
@@ -58,22 +57,21 @@ describe('LoginComponent', () => {
     it('should be invalid when password has 6 lowercase letters (no uppercase, no digit)', () => {
       setValue('password', 'abcdef');
       const pwd = component.loginForm.get('password')!;
-      expect(pwd.hasError('uppercase')).toBe(true);
-      expect(pwd.hasError('digit')).toBe(true);
+      expect(pwd.hasError('pattern')).toBe(true);
       expect(component.loginForm.invalid).toBe(true);
     });
 
     it('should be invalid when password has 6 characters but no uppercase', () => {
       setValue('password', 'abcd12');
       const pwd = component.loginForm.get('password')!;
-      expect(pwd.hasError('uppercase')).toBe(true);
+      expect(pwd.hasError('pattern')).toBe(true);
       expect(component.loginForm.invalid).toBe(true);
     });
 
     it('should be invalid when password has 6 characters but no digit', () => {
       setValue('password', 'Abcdef');
       const pwd = component.loginForm.get('password')!;
-      expect(pwd.hasError('digit')).toBe(true);
+      expect(pwd.hasError('pattern')).toBe(true);
       expect(component.loginForm.invalid).toBe(true);
     });
 

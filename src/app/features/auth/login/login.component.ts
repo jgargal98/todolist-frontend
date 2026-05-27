@@ -1,52 +1,31 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
   Validators,
 } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 
 /**
- * Validates that the control value contains at least one uppercase letter.
+ * Regex enforcing API password rules:
+ * - Minimum 6 characters
+ * - At least one uppercase letter
+ * - At least one lowercase letter
+ * - At least one digit
  */
-function uppercaseValidator(control: AbstractControl): ValidationErrors | null {
-  if (!control.value) {
-    return null;
-  }
-  return /[A-Z]/.test(control.value) ? null : { uppercase: true };
-}
-
-/**
- * Validates that the control value contains at least one lowercase letter.
- */
-function lowercaseValidator(control: AbstractControl): ValidationErrors | null {
-  if (!control.value) {
-    return null;
-  }
-  return /[a-z]/.test(control.value) ? null : { lowercase: true };
-}
-
-/**
- * Validates that the control value contains at least one digit.
- */
-function digitValidator(control: AbstractControl): ValidationErrors | null {
-  if (!control.value) {
-    return null;
-  }
-  return /\d/.test(control.value) ? null : { digit: true };
-}
+const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
 
 @Component({
   selector: 'app-login',
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     InputTextModule,
     PasswordModule,
     ButtonModule,
@@ -99,6 +78,34 @@ function digitValidator(control: AbstractControl): ValidationErrors | null {
         width: 100%;
         margin-top: 0.5rem;
       }
+
+      .mt-3 {
+        margin-top: 1rem;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+
+      .text-sm {
+        font-size: 0.875rem;
+      }
+
+      .text-primary {
+        color: var(--p-primary-color);
+      }
+
+      .no-underline {
+        text-decoration: none;
+      }
+
+      .font-semibold {
+        font-weight: 600;
+      }
+
+      .cursor-pointer {
+        cursor: pointer;
+      }
     `,
   ],
 })
@@ -114,9 +121,7 @@ export class LoginComponent {
         [
           Validators.required,
           Validators.minLength(6),
-          uppercaseValidator,
-          lowercaseValidator,
-          digitValidator,
+          Validators.pattern(PASSWORD_PATTERN),
         ],
       ],
     });
