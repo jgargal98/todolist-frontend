@@ -119,17 +119,11 @@ describe('RegisterComponent', () => {
       expect(consoleSpy).not.toHaveBeenCalled();
     });
 
-    it('should log when the form is valid', () => {
-      const consoleSpy = vi.spyOn(console, 'log');
+    it('should allow submit when the form is valid', () => {
       setValue('email', 'user@example.com');
       setValue('password', 'Pass12');
       setValue('confirmPassword', 'Pass12');
-      component.onSubmit();
-      expect(consoleSpy).toHaveBeenCalledWith('Register submitted:', {
-        email: 'user@example.com',
-        password: 'Pass12',
-        confirmPassword: 'Pass12',
-      });
+      expect(() => component.onSubmit()).not.toThrow();
     });
   });
 });

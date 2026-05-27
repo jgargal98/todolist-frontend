@@ -72,6 +72,6 @@ export class RegisterComponent {
     if (this.registerForm.invalid) {
       return;
     }
-    console.log('Register submitted:', this.registerForm.value);
+    // TODO: Dispatch action in next phase
   }
 }

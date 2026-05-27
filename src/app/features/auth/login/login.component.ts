@@ -53,6 +53,6 @@ export class LoginComponent {
     if (this.loginForm.invalid) {
       return;
     }
-    console.log('Login submitted:', this.loginForm.value);
+    // TODO: Dispatch action in next phase
   }
 }
