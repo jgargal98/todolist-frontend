@@ -26,7 +26,7 @@
             <span style="font-size: 1.05rem; font-weight: 600">TodoList</span>
           </div>
 
-          <!-- Tasks / Filters Section -->
+          <!-- Status Section -->
           <div style="display: flex; flex-direction: column; gap: 0.15rem">
             <span
               style="
@@ -37,9 +37,9 @@
                 color: var(--p-text-secondary-color);
                 padding: 0 0.5rem 0.15rem;
               "
-              >Tasks</span
+              >Status</span
             >
-            @for (filter of filters; track filter.label) {
+            @for (item of statusItems; track item.status) {
               <div
                 style="
                   display: flex;
@@ -49,18 +49,15 @@
                   border-radius: var(--p-border-radius);
                   cursor: default;
                 "
-                [style.background]="
-                  filter.selected
-                    ? 'color-mix(in srgb, var(--p-primary-color) 15%, transparent)'
-                    : 'transparent'
-                "
               >
                 <i
-                  [class]="'pi ' + filter.icon"
+                  [class]="'pi ' + (item.status | taskStatusIcon)"
                   style="font-size: 0.875rem; color: var(--p-text-secondary-color)"
                 ></i>
-                <span style="flex: 1; font-size: 0.8125rem">{{ filter.label }}</span>
-                <p-badge [value]="filter.count" severity="secondary" />
+                <span style="flex: 1; font-size: 0.8125rem">{{
+                  item.status | taskStatusLabel
+                }}</span>
+                <p-badge [value]="item.count" severity="secondary" />
               </div>
             }
           </div>
@@ -135,42 +132,6 @@
                 [style]="{ 'font-size': '0.8125rem' }"
               />
             </div>
-          </div>
-
-          <!-- Status Section -->
-          <div style="display: flex; flex-direction: column; gap: 0.15rem">
-            <span
-              style="
-                font-size: 0.7rem;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                color: var(--p-text-secondary-color);
-                padding: 0 0.5rem 0.15rem;
-              "
-              >Status</span
-            >
-            @for (item of statusItems; track item.status) {
-              <div
-                style="
-                  display: flex;
-                  align-items: center;
-                  gap: 0.5rem;
-                  padding: 0.3rem 0.5rem;
-                  border-radius: var(--p-border-radius);
-                  cursor: default;
-                "
-              >
-                <i
-                  [class]="'pi ' + (item.status | taskStatusIcon)"
-                  style="font-size: 0.875rem; color: var(--p-text-secondary-color)"
-                ></i>
-                <span style="flex: 1; font-size: 0.8125rem">{{
-                  item.status | taskStatusLabel
-                }}</span>
-                <p-badge [value]="item.count" severity="secondary" />
-              </div>
-            }
           </div>
 
           <!-- Spacer -->

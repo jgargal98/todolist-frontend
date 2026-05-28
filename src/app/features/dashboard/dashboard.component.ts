@@ -3,15 +3,14 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
-import { CheckboxModule } from 'primeng/checkbox';
+
 import { ChipModule } from 'primeng/chip';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
-import { InputGroupModule } from 'primeng/inputgroup';
-import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+
 import { InputTextModule } from 'primeng/inputtext';
-import { MultiSelectModule } from 'primeng/multiselect';
+
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { SelectModule } from 'primeng/select';
 import { SplitterModule } from 'primeng/splitter';
@@ -30,13 +29,6 @@ import {
   TaskDetailPanelComponent,
   type SelectOption,
 } from './task-detail-panel/task-detail-panel.component';
-
-interface FilterItem {
-  label: string;
-  icon: string;
-  count: number;
-  selected: boolean;
-}
 
 interface CategoryDisplayItem extends CategoryResponse {
   count: number;
@@ -64,8 +56,6 @@ interface TaskDisplayItem extends TaskResponse {
     ChipModule,
     DialogModule,
     DividerModule,
-    InputGroupModule,
-    InputGroupAddonModule,
     InputTextModule,
     ScrollPanelModule,
     SelectModule,
@@ -89,14 +79,6 @@ interface TaskDisplayItem extends TaskResponse {
   `],
 })
 export class DashboardComponent {
-  readonly filters: FilterItem[] = [
-    { label: 'All Tasks', icon: 'pi-list', count: 12, selected: true },
-    { label: 'Today', icon: 'pi-calendar', count: 3, selected: false },
-    { label: 'Important', icon: 'pi-star', count: 5, selected: false },
-    { label: 'Planned', icon: 'pi-calendar-clock', count: 7, selected: false },
-    { label: 'Assigned', icon: 'pi-user', count: 2, selected: false },
-  ];
-
   private readonly rawCategories: CategoryDisplayItem[] = [
     { id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', name: 'General', count: 4 },
     { id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', name: 'Work', count: 6 },
