@@ -16,7 +16,7 @@ const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
 @Component({
   selector: 'app-login',
   host: {
-    style: 'display: flex; align-items: center; justify-content: center; min-height: 100vh;',
+    style: 'height: 100vh; width: 100vw; overflow: hidden; display: block;',
   },
   imports: [
     ReactiveFormsModule,
@@ -27,6 +27,7 @@ const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
     ButtonModule,
   ],
   templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
 })
 export class LoginComponent {
   readonly loginForm: FormGroup;

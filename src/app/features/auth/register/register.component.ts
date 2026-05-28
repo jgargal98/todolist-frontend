@@ -31,7 +31,7 @@ function passwordMatchValidator(
 @Component({
   selector: 'app-register',
   host: {
-    style: 'display: flex; align-items: center; justify-content: center; min-height: 100vh;',
+    style: 'height: 100vh; width: 100vw; overflow: hidden; display: block;',
   },
   imports: [
     ReactiveFormsModule,
@@ -42,6 +42,7 @@ function passwordMatchValidator(
     ButtonModule,
   ],
   templateUrl: './register.component.html',
+  styleUrl: './register.component.css',
 })
 export class RegisterComponent {
   readonly registerForm: FormGroup;
