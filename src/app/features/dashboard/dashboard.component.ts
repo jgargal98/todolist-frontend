@@ -213,4 +213,14 @@ export class DashboardComponent {
     { title: 'Create wireframes', isDone: true },
     { title: 'Prepare presentation', isDone: false },
   ];
+
+  showRightPanel = false;
+
+  openNewTaskPanel(): void {
+    this.showRightPanel = true;
+  }
+
+  closeRightPanel(): void {
+    this.showRightPanel = false;
+  }
 }
