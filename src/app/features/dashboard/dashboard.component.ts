@@ -81,6 +81,15 @@ interface SelectOption<T = string> {
     TaskStatusIconPipe,
   ],
   templateUrl: './dashboard.component.html',
+  styles: [`
+    @keyframes slideInRight {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .panel-enter {
+      animation: slideInRight 0.25s ease-out;
+    }
+  `],
 })
 export class DashboardComponent {
   readonly filters: FilterItem[] = [
