@@ -1,59 +1,100 @@
-# Frontend
+# TaskFlow — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
+Aplicación Angular 19+ de gestión de tareas con PrimeNG y tema Nora en modo oscuro. Sigue una arquitectura de componentes standalone con tipado estricto alineado a los DTOs del backend .NET.
 
-## Development server
+## Stack
 
-To start a local development server, run:
+| Capa | Tecnología |
+|------|-----------|
+| Framework | Angular 21.1 |
+| UI | PrimeNG 21.1 + Nora theme |
+| Estado | NGXS (@ngxs/store) |
+| Formularios | ReactiveForms |
+| Testing | Vitest 4 |
+| Build | @angular/build 21 |
 
-```bash
-ng serve
+## Arquitectura
+
+```
+src/
+├── app/
+│   ├── features/
+│   │   ├── auth/
+│   │   │   ├── login/           # LoginComponent — tarjeta centrada, p-password toggle
+│   │   │   └── register/        # RegisterComponent — misma simetría, confirmPassword
+│   │   └── dashboard/           # DashboardComponent — splitter 3 paneles, tareas
+│   └── shared/
+│       ├── enums/
+│       │   └── task-status.enum.ts
+│       ├── models/
+│       │   └── dto/             # Interfaces TypeScript 1:1 con DTOs del backend
+│       └── pipes/
+│           ├── task-status-label.pipe.ts
+│           ├── task-status-severity.pipe.ts
+│           └── task-status-icon.pipe.ts
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### DTOs del backend replicados (`shared/models/dto/`)
 
-## Code scaffolding
+| Archivo | DTOs |
+|---------|------|
+| `auth.dto.ts` | `RegisterRequest`, `LoginRequest`, `AuthResponse`, `RefreshRequest` |
+| `category.dto.ts` | `CategoryResponse`, `CreateCategoryRequest`, `UpdateCategoryRequest` |
+| `tag.dto.ts` | `TagResponse`, `CreateTagRequest` |
+| `task.dto.ts` | `TaskResponse`, `SubTaskResponse`, `CreateTaskRequest`, `UpdateTaskRequest` |
+| `user.dto.ts` | `UserResponseDto` |
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Enumeraciones (`shared/enums/`)
+
+| Enum | Valores |
+|------|---------|
+| `TaskStatus` | `NonStarted=1`, `InProgress=2`, `Paused=3`, `Late=4`, `Finished=5` |
+
+## Componentes
+
+### Dashboard (`/dashboard`)
+
+Layout de 3 paneles con `p-splitter`:
+- **Izquierdo (20%)**: Filtros, categorías, tags, estados
+- **Central (55%)**: Lista de tareas con fecha, subtareas y categoría
+- **Derecho (25%)**: Detalle de tarea (título, descripción, clasificación, subtareas)
+
+Todas las entidades usan **GUIDs** como identificadores. Las fechas son objetos `Date` nativos formateados con `date` pipe. Los estados usan el enum `TaskStatus` con valores numéricos 1–5 mapeados directamente a la API.
+
+### Login (`/login`)
+
+Tarjeta centrada (max-width 28rem) sobre fondo oscuro. Campos fluidos con `p-password` + `toggleMask`. Enlace "Forgot password?" y navegación a registro. Sin lógica de autenticación simulada — `onSubmit()` preparado para despachar acción NGXS.
+
+### Register (`/register`)
+
+Misma simetría visual que Login. Incluye `confirmPassword` con validador cruzado de coincidencia. Enlace de navegación a inicio de sesión.
+
+## Comandos
 
 ```bash
-ng generate component component-name
+ng serve          # Servidor de desarrollo (http://localhost:4200)
+ng build          # Build producción → dist/
+ng test           # Tests unitarios (Vitest) — 30 tests, 3 suites
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Tests
 
-```bash
-ng generate --help
-```
+Suite actual: **30 tests / 3 archivos** — todos en verde.
 
-## Building
+| Archivo | Tests |
+|---------|-------|
+| `app.spec.ts` | 2 |
+| `login.component.spec.ts` | 12 |
+| `register.component.spec.ts` | 16 |
 
-To build the project run:
+## Progreso actual
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [x] Layout Dashboard con splitter, filtros, tareas y detalle
+- [x] DTOs del backend replicados fielmente en TypeScript
+- [x] Enumeraciones estrictas para estados (TaskStatus)
+- [x] Pipes de presentación (status → label/icon/severity)
+- [x] Login y Register con diseño oscuro centrado y simétrico
+- [x] 0 estilos inline en templates (CSS clase-based)
+- [x] Build limpio (0 warnings) + 30 tests verdes
+- [ ] Conexión con API REST (servicios + NGXS store)
+- [ ] Autenticación real con JWT
