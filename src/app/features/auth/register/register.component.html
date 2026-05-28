@@ -1,17 +1,17 @@
-<div class="auth-container">
-  <p-card styleClass="auth-card">
+<div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">
+  <p-card [style]="{ maxWidth: '28rem', width: '100%' }">
     <ng-template pTemplate="title">
-      <div class="auth-header">
-        <i class="pi pi-check-square auth-header-icon"></i>
-        <h2 class="auth-title">Create Account</h2>
+      <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+        <i class="pi pi-check-square" style="font-size: 1.25rem; color: var(--p-primary-color); margin-bottom: 0.25rem;"></i>
+        <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">Create Account</h2>
       </div>
-      <p class="auth-subtitle">Sign up to get started</p>
+      <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--p-text-muted-color);">Sign up to get started</p>
     </ng-template>
 
     <ng-template pTemplate="content">
-      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
-        <div class="field">
-          <label for="email">Email</label>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" [style]="{ display: 'flex', flexDirection: 'column', gap: '1rem' }">
+        <div [style]="{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }">
+          <label for="email" style="font-weight: 500; font-size: 0.875rem;">Email</label>
           <input
             id="email"
             type="email"
@@ -24,16 +24,16 @@
 
           @if (f['email'].touched && f['email'].invalid) {
             @if (f['email'].hasError('required')) {
-              <small class="field-error">Email is required.</small>
+              <small style="color: var(--p-red-400);">Email is required.</small>
             }
             @if (f['email'].hasError('email')) {
-              <small class="field-error">Please enter a valid email address.</small>
+              <small style="color: var(--p-red-400);">Please enter a valid email address.</small>
             }
           }
         </div>
 
-        <div class="field">
-          <label for="password">Password</label>
+        <div [style]="{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }">
+          <label for="password" style="font-weight: 500; font-size: 0.875rem;">Password</label>
           <p-password
             id="password"
             formControlName="password"
@@ -46,19 +46,19 @@
 
           @if (f['password'].touched && f['password'].invalid) {
             @if (f['password'].hasError('required')) {
-              <small class="field-error">Password is required.</small>
+              <small style="color: var(--p-red-400);">Password is required.</small>
             }
             @if (f['password'].hasError('minlength')) {
-              <small class="field-error">Password must be at least 6 characters long.</small>
+              <small style="color: var(--p-red-400);">Password must be at least 6 characters long.</small>
             }
             @if (f['password'].hasError('pattern')) {
-              <small class="field-error">Password must contain at least one uppercase letter, one lowercase letter, and one digit.</small>
+              <small style="color: var(--p-red-400);">Password must contain at least one uppercase letter, one lowercase letter, and one digit.</small>
             }
           }
         </div>
 
-        <div class="field">
-          <label for="confirmPassword">Confirm Password</label>
+        <div [style]="{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }">
+          <label for="confirmPassword" style="font-weight: 500; font-size: 0.875rem;">Confirm Password</label>
           <p-password
             id="confirmPassword"
             formControlName="confirmPassword"
@@ -71,12 +71,12 @@
 
           @if (f['confirmPassword'].touched && f['confirmPassword'].invalid) {
             @if (f['confirmPassword'].hasError('required')) {
-              <small class="field-error">Please confirm your password.</small>
+              <small style="color: var(--p-red-400);">Please confirm your password.</small>
             }
           }
 
           @if (registerForm.hasError('passwordMismatch') && f['confirmPassword'].touched && f['confirmPassword'].dirty) {
-            <small class="field-error">Passwords do not match.</small>
+            <small style="color: var(--p-red-400);">Passwords do not match.</small>
           }
         </div>
 
@@ -90,9 +90,9 @@
     </ng-template>
 
     <ng-template pTemplate="footer">
-      <p class="auth-footer-text">
-        <span class="auth-footer-muted">Already have an account? </span>
-        <a routerLink="/login" class="auth-footer-link">Sign In</a>
+      <p style="margin: 0; font-size: 0.875rem; text-align: center;">
+        <span style="color: var(--p-text-muted-color);">Already have an account? </span>
+        <a routerLink="/login" style="color: var(--p-primary-color); font-weight: 700; text-decoration: none;">Sign In</a>
       </p>
     </ng-template>
   </p-card>

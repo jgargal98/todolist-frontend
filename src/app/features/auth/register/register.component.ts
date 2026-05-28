@@ -42,7 +42,6 @@ function passwordMatchValidator(
     ButtonModule,
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css',
 })
 export class RegisterComponent {
   readonly registerForm: FormGroup;
