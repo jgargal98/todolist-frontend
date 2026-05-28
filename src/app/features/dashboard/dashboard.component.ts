@@ -19,12 +19,17 @@ import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
 
 import { TaskStatus } from '../../shared/enums/task-status.enum';
-import type { CategoryResponse, TagResponse, TaskResponse, SubTaskResponse } from '../../shared/models/dto';
+import type { CategoryResponse, TagResponse, TaskResponse } from '../../shared/models/dto';
+import type { CreateTaskRequest } from '../../shared/models/dto';
 import {
   TaskStatusIconPipe,
   TaskStatusLabelPipe,
   TaskStatusSeverityPipe,
 } from '../../shared/pipes';
+import {
+  TaskDetailPanelComponent,
+  type SelectOption,
+} from './task-detail-panel/task-detail-panel.component';
 
 interface FilterItem {
   label: string;
@@ -34,7 +39,6 @@ interface FilterItem {
 }
 
 interface CategoryDisplayItem extends CategoryResponse {
-  color: string;
   count: number;
 }
 
@@ -45,12 +49,6 @@ interface StatusSummaryItem {
 
 interface TaskDisplayItem extends TaskResponse {
   categoryName: string;
-  categoryColor: string;
-}
-
-interface SelectOption<T = string> {
-  label: string;
-  value: T;
 }
 
 @Component({
@@ -63,15 +61,12 @@ interface SelectOption<T = string> {
     DatePipe,
     BadgeModule,
     ButtonModule,
-    CheckboxModule,
     ChipModule,
-    DatePickerModule,
     DialogModule,
     DividerModule,
     InputGroupModule,
     InputGroupAddonModule,
     InputTextModule,
-    MultiSelectModule,
     ScrollPanelModule,
     SelectModule,
     SplitterModule,
@@ -79,6 +74,8 @@ interface SelectOption<T = string> {
     TextareaModule,
     TaskStatusLabelPipe,
     TaskStatusIconPipe,
+    TaskStatusSeverityPipe,
+    TaskDetailPanelComponent,
   ],
   templateUrl: './dashboard.component.html',
   styles: [`
@@ -101,9 +98,9 @@ export class DashboardComponent {
   ];
 
   private readonly rawCategories: CategoryDisplayItem[] = [
-    { id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', name: 'General', color: '#6366f1', count: 4 },
-    { id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', name: 'Work', color: '#f97316', count: 6 },
-    { id: 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f', name: 'Personal', color: '#22c55e', count: 2 },
+    { id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', name: 'General', count: 4 },
+    { id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', name: 'Work', count: 6 },
+    { id: 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f', name: 'Personal', count: 2 },
   ];
 
   private readonly rawTags: TagResponse[] = [
@@ -193,7 +190,6 @@ export class DashboardComponent {
     return {
       ...task,
       categoryName: cat?.name ?? '',
-      categoryColor: cat?.color ?? '#6366f1',
     };
   });
 
@@ -215,14 +211,6 @@ export class DashboardComponent {
     value: t.id,
   }));
 
-  selectedTags: string[] = [];
-
-  readonly detailSubtasks: SubTaskResponse[] = [
-    { title: 'Research UI patterns', isDone: false },
-    { title: 'Create wireframes', isDone: true },
-    { title: 'Prepare presentation', isDone: false },
-  ];
-
   showRightPanel = false;
 
   openNewTaskPanel(): void {
@@ -231,5 +219,10 @@ export class DashboardComponent {
 
   closeRightPanel(): void {
     this.showRightPanel = false;
+  }
+
+  onSaveTask(request: CreateTaskRequest): void {
+    console.log('Task to save:', request);
+    this.closeRightPanel();
   }
 }
