@@ -9,23 +9,17 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () =>
-      import('./features/auth/login/login.component').then(
-        (m) => m.LoginComponent,
-      ),
+    loadComponent: () => import('./features/auth/auth.component').then((m) => m.AuthComponent),
+    data: { mode: 'login' },
   },
   {
     path: 'register',
-    loadComponent: () =>
-      import('./features/auth/register/register.component').then(
-        (m) => m.RegisterComponent,
-      ),
+    loadComponent: () => import('./features/auth/auth.component').then((m) => m.AuthComponent),
+    data: { mode: 'register' },
   },
   {
     path: 'dashboard',
     loadComponent: () =>
-      import('./features/dashboard/dashboard.component').then(
-        (m) => m.DashboardComponent,
-      ),
+      import('./features/dashboard/dashboard.component').then((m) => m.DashboardComponent),
   },
 ];
