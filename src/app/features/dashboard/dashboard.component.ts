@@ -66,6 +66,28 @@ export class DashboardComponent {
     return { ...task, categoryName: cat?.name ?? '' };
   });
 
+  selectedStatus: TaskStatus | null = null;
+  selectedCategoryId: string | null = null;
+
+  get visibleTasks(): TaskDisplayItem[] {
+    return this.tasks.filter((task) => {
+      const statusMatches = this.selectedStatus === null || task.status === this.selectedStatus;
+      const categoryMatches =
+        this.selectedCategoryId === null || task.categoryId === this.selectedCategoryId;
+      return statusMatches && categoryMatches;
+    });
+  }
+
+  get taskHeaderLabel(): string {
+    if (this.selectedStatus === null && this.selectedCategoryId === null) {
+      return 'All Tasks';
+    }
+    if (this.selectedStatus !== null && this.selectedCategoryId !== null) {
+      return 'Filtered Tasks';
+    }
+    return 'Filtered Tasks';
+  }
+
   // Form options for the child panel's select/multiselect dropdowns
   readonly statusOptions: SelectOption<number>[] = [
     { label: 'Non Started', value: TaskStatus.NonStarted },
@@ -89,7 +111,11 @@ export class DashboardComponent {
   editingTask: TaskDisplayItem | null = null;
 
   filterByStatus(status: TaskStatus): void {
-    // TODO: Filter task list by status
+    this.selectedStatus = this.selectedStatus === status ? null : status;
+  }
+
+  filterByCategory(categoryId: string): void {
+    this.selectedCategoryId = this.selectedCategoryId === categoryId ? null : categoryId;
   }
 
   addCategory(): void {

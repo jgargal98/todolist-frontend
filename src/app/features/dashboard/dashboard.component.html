@@ -11,7 +11,10 @@
         [statusItems]="statusItems"
         [categories]="categories"
         [tags]="tags"
+        [activeStatus]="selectedStatus"
+        [activeCategory]="selectedCategoryId"
         (filterByStatus)="filterByStatus($event)"
+        (filterByCategory)="filterByCategory($event)"
         (addCategory)="addCategory()"
         (addTag)="addTag()"
         (openCalendar)="openCalendar()"
@@ -26,8 +29,8 @@
           <!-- Header with count -->
           <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center; gap: 0.75rem">
-              <span style="font-size: 1.5rem; font-weight: 600">All Tasks</span>
-              <p-badge [value]="tasks.length" severity="secondary" />
+              <span style="font-size: 1.5rem; font-weight: 600">{{ taskHeaderLabel }}</span>
+              <p-badge [value]="visibleTasks.length" severity="secondary" />
             </div>
           </div>
 
@@ -38,7 +41,7 @@
 
           <!-- Task List -->
           <div style="display: flex; flex-direction: column">
-            @for (task of tasks; track task.id) {
+            @for (task of visibleTasks; track task.id) {
               <app-task-row [task]="task" (edit)="editTask($event)" />
               @if (!$last) {
                 <p-divider style="margin: 0" />

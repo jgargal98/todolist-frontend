@@ -1,5 +1,7 @@
 <div style="height: 100%; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none">
-  <div style="padding: 0.75rem; display: flex; flex-direction: column; gap: 0.75rem; min-height: 100%;">
+  <div
+    style="padding: 0.75rem; display: flex; flex-direction: column; gap: 0.75rem; min-height: 100%"
+  >
     <!-- Header -->
     <div style="display: flex; align-items: center; gap: 0.5rem">
       <i class="pi pi-check-square" style="font-size: 1.25rem; color: var(--p-primary-color)"></i>
@@ -8,26 +10,83 @@
 
     <!-- Status Section -->
     <div style="display: flex; flex-direction: column; gap: 0.15rem">
-      <span style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--p-text-secondary-color); padding: 0 0.5rem 0.15rem;">Status</span>
+      <span
+        style="
+          font-size: 0.7rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: var(--p-text-secondary-color);
+          padding: 0 0.5rem 0.15rem;
+        "
+        >Status</span
+      >
       @for (item of statusItems(); track item.status) {
-        <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.5rem; border-radius: var(--p-border-radius); cursor: pointer;" (click)="filterByStatus.emit(item.status)">
-          <i [class]="'pi ' + (item.status | taskStatusIcon)" style="font-size: 0.875rem; color: var(--p-text-secondary-color)"></i>
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: var(--p-border-radius);
+            cursor: pointer;
+          "
+          [style.backgroundColor]="
+            item.status === activeStatus() ? 'rgba(0, 123, 255, 0.08)' : 'transparent'
+          "
+          (click)="filterByStatus.emit(item.status)"
+        >
+          <i
+            [class]="'pi ' + (item.status | taskStatusIcon)"
+            style="font-size: 0.875rem; color: var(--p-text-secondary-color)"
+          ></i>
           <span style="flex: 1; font-size: 0.8125rem">{{ item.status | taskStatusLabel }}</span>
-          <p-badge [value]="item.count" severity="secondary" />
         </div>
       }
     </div>
 
     <!-- Categories Section -->
     <div style="display: flex; flex-direction: column; gap: 0.15rem">
-      <span style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--p-text-secondary-color); padding: 0 0.5rem 0.15rem;">Categories</span>
+      <span
+        style="
+          font-size: 0.7rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: var(--p-text-secondary-color);
+          padding: 0 0.5rem 0.15rem;
+        "
+        >Categories</span
+      >
       @for (cat of categories(); track cat.id) {
-        <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.2rem 0.5rem; border-radius: var(--p-border-radius); cursor: pointer;">
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--p-border-radius);
+            cursor: pointer;
+          "
+          [style.backgroundColor]="
+            cat.id === activeCategory() ? 'rgba(0, 123, 255, 0.08)' : 'transparent'
+          "
+          (click)="filterByCategory.emit(cat.id)"
+        >
           <span style="flex: 1; font-size: 0.8125rem">{{ cat.name }}</span>
-          <span style="font-size: 0.75rem; color: var(--p-text-secondary-color)">{{ cat.count }}</span>
         </div>
       }
-      <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.2rem 0.5rem; cursor: pointer; border-radius: var(--p-border-radius);" (click)="addCategory.emit()">
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.2rem 0.5rem;
+          cursor: pointer;
+          border-radius: var(--p-border-radius);
+        "
+        (click)="addCategory.emit()"
+      >
         <i class="pi pi-plus" style="font-size: 0.65rem; color: var(--p-primary-color)"></i>
         <span style="font-size: 0.8125rem; color: var(--p-primary-color)">Add New Category</span>
       </div>
@@ -35,12 +94,28 @@
 
     <!-- Tags Section -->
     <div style="display: flex; flex-direction: column; gap: 0.35rem">
-      <span style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--p-text-secondary-color); padding: 0 0.5rem;">Tags</span>
+      <span
+        style="
+          font-size: 0.7rem;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          color: var(--p-text-secondary-color);
+          padding: 0 0.5rem;
+        "
+        >Tags</span
+      >
       <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0 0.5rem">
         @for (tag of tags(); track tag.id) {
           <p-chip [label]="tag.name" />
         }
-        <p-button icon="pi pi-plus" severity="secondary" [link]="true" [style]="{ 'font-size': '0.8125rem' }" (click)="addTag.emit()" />
+        <p-button
+          icon="pi pi-plus"
+          severity="secondary"
+          [link]="true"
+          [style]="{ 'font-size': '0.8125rem' }"
+          (click)="addTag.emit()"
+        />
       </div>
     </div>
 
@@ -49,12 +124,36 @@
 
     <!-- Bottom Links -->
     <div style="display: flex; flex-direction: column; gap: 0.15rem; padding: 0 0.5rem">
-      <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.2rem 0.25rem; cursor: pointer;" (click)="openCalendar.emit()">
-        <i class="pi pi-calendar" style="font-size: 0.875rem; color: var(--p-text-secondary-color)"></i>
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.2rem 0.25rem;
+          cursor: pointer;
+        "
+        (click)="openCalendar.emit()"
+      >
+        <i
+          class="pi pi-calendar"
+          style="font-size: 0.875rem; color: var(--p-text-secondary-color)"
+        ></i>
         <span style="font-size: 0.8125rem">Calendar</span>
       </div>
-      <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.2rem 0.25rem; cursor: pointer;" (click)="logout.emit()">
-        <i class="pi pi-sign-out" style="font-size: 0.875rem; color: var(--p-text-secondary-color)"></i>
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.2rem 0.25rem;
+          cursor: pointer;
+        "
+        (click)="logout.emit()"
+      >
+        <i
+          class="pi pi-sign-out"
+          style="font-size: 0.875rem; color: var(--p-text-secondary-color)"
+        ></i>
         <span style="font-size: 0.8125rem">Sign Out</span>
       </div>
     </div>

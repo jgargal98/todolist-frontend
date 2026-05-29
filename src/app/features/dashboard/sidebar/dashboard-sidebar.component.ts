@@ -24,8 +24,11 @@ export class DashboardSidebarComponent {
   readonly statusItems = input.required<readonly StatusSummaryItem[]>();
   readonly categories = input.required<readonly CategoryDisplayItem[]>();
   readonly tags = input.required<readonly TagResponse[]>();
+  readonly activeStatus = input<TaskStatus | null>();
+  readonly activeCategory = input<string | null>();
 
   readonly filterByStatus = output<TaskStatus>();
+  readonly filterByCategory = output<string>();
   readonly addCategory = output<void>();
   readonly addTag = output<void>();
   readonly openCalendar = output<void>();
