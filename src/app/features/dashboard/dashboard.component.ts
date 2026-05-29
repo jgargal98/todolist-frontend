@@ -68,15 +68,23 @@ interface TaskDisplayItem extends TaskResponse {
     TaskDetailPanelComponent,
   ],
   templateUrl: './dashboard.component.html',
-  styles: [`
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-    .panel-enter {
-      animation: slideInRight 0.25s ease-out;
-    }
-  `],
+  styles: [
+    `
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+      .panel-enter {
+        animation: slideInRight 0.25s ease-out;
+      }
+    `,
+  ],
 })
 export class DashboardComponent {
   private readonly rawCategories: CategoryDisplayItem[] = [
@@ -86,9 +94,21 @@ export class DashboardComponent {
   ];
 
   private readonly rawTags: TagResponse[] = [
-    { id: 'd4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a', name: 'Development', userId: '00000000-0000-0000-0000-000000000001' },
-    { id: 'e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b', name: 'Design', userId: '00000000-0000-0000-0000-000000000001' },
-    { id: 'f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c', name: 'Meetings', userId: '00000000-0000-0000-0000-000000000001' },
+    {
+      id: 'd4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a',
+      name: 'Development',
+      userId: '00000000-0000-0000-0000-000000000001',
+    },
+    {
+      id: 'e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b',
+      name: 'Design',
+      userId: '00000000-0000-0000-0000-000000000001',
+    },
+    {
+      id: 'f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c',
+      name: 'Meetings',
+      userId: '00000000-0000-0000-0000-000000000001',
+    },
   ];
 
   private readonly rawTasks: TaskResponse[] = [
@@ -105,7 +125,11 @@ export class DashboardComponent {
         { title: 'Prepare presentation', isDone: false },
       ],
       tags: [
-        { id: 'e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b', name: 'Design', userId: '00000000-0000-0000-0000-000000000001' },
+        {
+          id: 'e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b',
+          name: 'Design',
+          userId: '00000000-0000-0000-0000-000000000001',
+        },
       ],
     },
     {
@@ -123,19 +147,22 @@ export class DashboardComponent {
         { title: 'Document API', isDone: false },
       ],
       tags: [
-        { id: 'd4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a', name: 'Development', userId: '00000000-0000-0000-0000-000000000001' },
+        {
+          id: 'd4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a',
+          name: 'Development',
+          userId: '00000000-0000-0000-0000-000000000001',
+        },
       ],
     },
     {
       id: 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f',
       title: 'Fix login validation bug',
-      description: 'Investigate and resolve the edge case causing false negatives on email validation.',
+      description:
+        'Investigate and resolve the edge case causing false negatives on email validation.',
       dueDate: new Date('2026-05-30'),
       status: TaskStatus.Late,
       categoryId: 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f',
-      subTasks: [
-        { title: 'Reproduce bug', isDone: true },
-      ],
+      subTasks: [{ title: 'Reproduce bug', isDone: true }],
       tags: [],
     },
     {
@@ -150,7 +177,11 @@ export class DashboardComponent {
         { title: 'Add code examples', isDone: false },
       ],
       tags: [
-        { id: 'f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c', name: 'Meetings', userId: '00000000-0000-0000-0000-000000000001' },
+        {
+          id: 'f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c',
+          name: 'Meetings',
+          userId: '00000000-0000-0000-0000-000000000001',
+        },
       ],
     },
   ];
@@ -167,8 +198,8 @@ export class DashboardComponent {
     { status: TaskStatus.Finished, count: 6 },
   ];
 
-  readonly tasks: TaskDisplayItem[] = this.rawTasks.map(task => {
-    const cat = this.rawCategories.find(c => c.id === task.categoryId);
+  readonly tasks: TaskDisplayItem[] = this.rawTasks.map((task) => {
+    const cat = this.rawCategories.find((c) => c.id === task.categoryId);
     return {
       ...task,
       categoryName: cat?.name ?? '',
@@ -183,12 +214,12 @@ export class DashboardComponent {
     { label: 'Finished', value: TaskStatus.Finished },
   ];
 
-  readonly categoryOptions: SelectOption[] = this.rawCategories.map(c => ({
+  readonly categoryOptions: SelectOption[] = this.rawCategories.map((c) => ({
     label: c.name,
     value: c.id,
   }));
 
-  readonly tagOptions: SelectOption[] = this.rawTags.map(t => ({
+  readonly tagOptions: SelectOption[] = this.rawTags.map((t) => ({
     label: t.name,
     value: t.id,
   }));
