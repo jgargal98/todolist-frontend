@@ -1,100 +1,78 @@
-# TaskFlow — Frontend
+# Todo List
 
-Aplicación Angular 19+ de gestión de tareas con PrimeNG y tema Nora en modo oscuro. Sigue una arquitectura de componentes standalone con tipado estricto alineado a los DTOs del backend .NET.
+Angular 21 task management app with PrimeNG and Nora theme. Standalone components, Reactive Forms, feature-based architecture.
 
 ## Stack
 
-| Capa | Tecnología |
-|------|-----------|
+| Layer | Technology |
+|-------|-----------|
 | Framework | Angular 21.1 |
-| UI | PrimeNG 21.1 + Nora theme |
-| Estado | NGXS (@ngxs/store) |
-| Formularios | ReactiveForms |
+| UI | PrimeNG 21.1 + PrimeUIX Nora + PrimeIcons |
+| Forms | ReactiveForms (FormGroup + FormArray) |
 | Testing | Vitest 4 |
 | Build | @angular/build 21 |
 
-## Arquitectura
+## Architecture
 
 ```
 src/
 ├── app/
+│   ├── core/                    # Guards, interceptors, NGXS store (empty — ready)
 │   ├── features/
 │   │   ├── auth/
-│   │   │   ├── login/           # LoginComponent — tarjeta centrada, p-password toggle
-│   │   │   └── register/        # RegisterComponent — misma simetría, confirmPassword
-│   │   └── dashboard/           # DashboardComponent — splitter 3 paneles, tareas
+│   │   │   ├── login/           # LoginComponent
+│   │   │   └── register/        # RegisterComponent
+│   │   └── dashboard/
+│   │       ├── dashboard.component.ts       # Smart component (state + orchestration)
+│   │       └── task-detail-panel/           # Dumb component (form + validation)
 │   └── shared/
 │       ├── enums/
 │       │   └── task-status.enum.ts
-│       ├── models/
-│       │   └── dto/             # Interfaces TypeScript 1:1 con DTOs del backend
-│       └── pipes/
-│           ├── task-status-label.pipe.ts
-│           ├── task-status-severity.pipe.ts
-│           └── task-status-icon.pipe.ts
+│       ├── models/dto/          # 1:1 interfaces with backend DTOs
+│       └── pipes/               # Presentation pipes (status → label/icon/severity)
+├── styles.css                   # Global reset + @layer primeng
+└── main.ts                      # bootstrapApplication
 ```
 
-### DTOs del backend replicados (`shared/models/dto/`)
+### Smart / Dumb Component Pattern
 
-| Archivo | DTOs |
-|---------|------|
-| `auth.dto.ts` | `RegisterRequest`, `LoginRequest`, `AuthResponse`, `RefreshRequest` |
-| `category.dto.ts` | `CategoryResponse`, `CreateCategoryRequest`, `UpdateCategoryRequest` |
-| `tag.dto.ts` | `TagResponse`, `CreateTagRequest` |
-| `task.dto.ts` | `TaskResponse`, `SubTaskResponse`, `CreateTaskRequest`, `UpdateTaskRequest` |
-| `user.dto.ts` | `UserResponseDto` |
+- **DashboardComponent** (Smart): owns data, controls panel visibility, orchestrates confirmations with `ConfirmationService`.
+- **TaskDetailPanelComponent** (Dumb): receives data via `@Input()`, emits events via `@Output()`, no external dependencies.
 
-### Enumeraciones (`shared/enums/`)
+### Reactive Forms
 
-| Enum | Valores |
-|------|---------|
-| `TaskStatus` | `NonStarted=1`, `InProgress=2`, `Paused=3`, `Late=4`, `Finished=5` |
-
-## Componentes
-
-### Dashboard (`/dashboard`)
-
-Layout de 3 paneles con `p-splitter`:
-- **Izquierdo (20%)**: Filtros, categorías, tags, estados
-- **Central (55%)**: Lista de tareas con fecha, subtareas y categoría
-- **Derecho (25%)**: Detalle de tarea (título, descripción, clasificación, subtareas)
-
-Todas las entidades usan **GUIDs** como identificadores. Las fechas son objetos `Date` nativos formateados con `date` pipe. Los estados usan el enum `TaskStatus` con valores numéricos 1–5 mapeados directamente a la API.
-
-### Login (`/login`)
-
-Tarjeta centrada (max-width 28rem) sobre fondo oscuro. Campos fluidos con `p-password` + `toggleMask`. Enlace "Forgot password?" y navegación a registro. Sin lógica de autenticación simulada — `onSubmit()` preparado para despachar acción NGXS.
-
-### Register (`/register`)
-
-Misma simetría visual que Login. Incluye `confirmPassword` con validador cruzado de coincidencia. Enlace de navegación a inicio de sesión.
-
-## Comandos
-
-```bash
-ng serve          # Servidor de desarrollo (http://localhost:4200)
-ng build          # Build producción → dist/
-ng test           # Tests unitarios (Vitest) — 30 tests, 3 suites
-```
+- `FormGroup` with synchronous validators (`required`, `maxlength`, `futureDate`).
+- `FormArray` for dynamic subtasks (add / remove).
+- Error messages use PrimeNG semantic class `.p-error`.
 
 ## Tests
 
-Suite actual: **30 tests / 3 archivos** — todos en verde.
+**75 tests / 4 files — all green.**
 
-| Archivo | Tests |
-|---------|-------|
+| File | Tests |
+|------|-------|
 | `app.spec.ts` | 2 |
-| `login.component.spec.ts` | 12 |
-| `register.component.spec.ts` | 16 |
+| `login.component.spec.ts` | 17 |
+| `register.component.spec.ts` | 17 |
+| `task-detail-panel.component.spec.ts` | 39 |
 
-## Progreso actual
+## Commands
 
-- [x] Layout Dashboard con splitter, filtros, tareas y detalle
-- [x] DTOs del backend replicados fielmente en TypeScript
-- [x] Enumeraciones estrictas para estados (TaskStatus)
-- [x] Pipes de presentación (status → label/icon/severity)
-- [x] Login y Register con diseño oscuro centrado y simétrico
-- [x] 0 estilos inline en templates (CSS clase-based)
-- [x] Build limpio (0 warnings) + 30 tests verdes
-- [ ] Conexión con API REST (servicios + NGXS store)
-- [ ] Autenticación real con JWT
+```bash
+ng serve          # Dev server (http://localhost:4200)
+ng build          # Production build → dist/
+ng test           # Unit tests (Vitest)
+```
+
+## Progress
+
+- [x] Dashboard layout with splitter (sidebar + task list + detail panel)
+- [x] Task form with Reactive Forms + full validation
+- [x] Dynamic subtasks with FormArray
+- [x] Backend DTOs replicated in TypeScript
+- [x] Presentation pipes (status → label / icon / severity)
+- [x] Delete confirmation with p-confirmDialog
+- [x] Login and Register centered layout
+- [x] 75 unit tests passing
+- [ ] API REST connection (NGXS store + HTTP services)
+- [ ] JWT authentication

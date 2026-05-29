@@ -32,6 +32,7 @@ import {
   type SelectOption,
 } from './task-detail-panel/task-detail-panel.component';
 
+// Local view-models extending API DTOs with computed display data
 interface CategoryDisplayItem extends CategoryResponse {
   count: number;
 }
@@ -87,9 +88,12 @@ interface TaskDisplayItem extends TaskResponse {
     `,
   ],
 })
+// Smart component: owns all data, controls panel visibility, orchestrates confirmations
+// The child TaskDetailPanelComponent receives data via @Input and emits events via @Output
 export class DashboardComponent {
   constructor(private confirmationService: ConfirmationService) {}
 
+  // Mock data — will be replaced by NGXS store selectors when the backend is connected
   private readonly rawCategories: CategoryDisplayItem[] = [
     { id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', name: 'General', count: 4 },
     { id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', name: 'Work', count: 6 },
@@ -201,6 +205,7 @@ export class DashboardComponent {
     { status: TaskStatus.Finished, count: 6 },
   ];
 
+  // Enrich tasks with resolved category names for display
   readonly tasks: TaskDisplayItem[] = this.rawTasks.map((task) => {
     const cat = this.rawCategories.find((c) => c.id === task.categoryId);
     return {
@@ -209,6 +214,7 @@ export class DashboardComponent {
     };
   });
 
+  // Form options for the child panel's select/multiselect dropdowns
   readonly statusOptions: SelectOption<number>[] = [
     { label: 'Non Started', value: TaskStatus.NonStarted },
     { label: 'In Progress', value: TaskStatus.InProgress },
@@ -245,11 +251,15 @@ export class DashboardComponent {
     this.editingTask = null;
   }
 
+  // Called when the child panel emits a save event
+  // Will dispatch a NGXS action when the store is connected
   onSaveTask(request: CreateTaskRequest): void {
     console.log('Task to save:', request);
     this.closeRightPanel();
   }
 
+  // Delete confirmation is handled here (smart component), not in the child panel
+  // This keeps the task-detail-panel pure — no dependencies on ConfirmationService
   onDeleteTask(id: string): void {
     this.confirmationService.confirm({
       header: 'Delete Task',

@@ -8,6 +8,7 @@ import { routes } from './app.routes';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
+    // PrimeNG theme preset + dark mode via CSS class toggle
     providePrimeNG({
       ripple: true,
       theme: {

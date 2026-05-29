@@ -5,7 +5,7 @@
     [panelSizes]="[20, 80]"
     [minSizes]="[15, 40]"
   >
-    <!-- Left Sidebar: Filters, Categories, Tags, Bottom Links -->
+    <!-- LEFT SIDEBAR — status filters, categories, tags, and nav links -->
     <ng-template pTemplate="panel">
       <div style="height: 100%; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none">
         <div
@@ -109,7 +109,7 @@
       </div>
     </ng-template>
 
-    <!-- Center Task Board -->
+    <!-- CENTER PANEL — task list with inline metadata (status tag, due date, subtask count) -->
     <ng-template pTemplate="panel">
       <p-scrollPanel style="height: 100%">
         <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem">
@@ -175,7 +175,7 @@
     </ng-template>
   </p-splitter>
 
-  <!-- Right Task Detail Panel -->
+  <!-- RIGHT PANEL — slide-in task form (create/edit). Dumb component, all events bubble up via @Output -->
   @if (showRightPanel) {
     <task-detail-panel
       [visible]="showRightPanel"
@@ -192,7 +192,7 @@
 
 <p-confirmDialog />
 
-<!-- Structural Dialogs (no active event bindings) -->
+<!-- Structural dialog placeholders — hidden until the corresponding feature logic is implemented -->
 <p-dialog header="Add Task" [visible]="false" [modal]="true" [style]="{ width: '32rem' }">
   <div style="display: flex; flex-direction: column; gap: 1rem">
     <input pInputText [fluid]="true" placeholder="Task title" />
