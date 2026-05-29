@@ -1,50 +1,31 @@
-import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
-
-import { ChipModule } from 'primeng/chip';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
-import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
-
 import { InputTextModule } from 'primeng/inputtext';
-
 import { ScrollPanelModule } from 'primeng/scrollpanel';
 import { SelectModule } from 'primeng/select';
 import { SplitterModule } from 'primeng/splitter';
-import { TagModule } from 'primeng/tag';
 import { TextareaModule } from 'primeng/textarea';
 
 import { TaskStatus } from '../../shared/enums/task-status.enum';
-import type { CategoryResponse, TagResponse, TaskResponse } from '../../shared/models/dto';
 import type { CreateTaskRequest } from '../../shared/models/dto';
-import {
-  TaskStatusIconPipe,
-  TaskStatusLabelPipe,
-  TaskStatusSeverityPipe,
-} from '../../shared/pipes';
 import {
   TaskDetailPanelComponent,
   type SelectOption,
 } from './task-detail-panel/task-detail-panel.component';
-
-// Local view-models extending API DTOs with computed display data
-interface CategoryDisplayItem extends CategoryResponse {
-  count: number;
-}
-
-interface StatusSummaryItem {
-  status: TaskStatus;
-  count: number;
-}
-
-interface TaskDisplayItem extends TaskResponse {
-  categoryName: string;
-}
+import { DashboardSidebarComponent } from './sidebar/dashboard-sidebar.component';
+import { TaskRowComponent } from './task-row/task-row.component';
+import {
+  MOCK_CATEGORIES,
+  MOCK_STATUS_ITEMS,
+  MOCK_TAGS,
+  MOCK_TASKS,
+  type TaskDisplayItem,
+} from './dashboard.mockdata';
 
 @Component({
   selector: 'app-dashboard',
@@ -53,11 +34,8 @@ interface TaskDisplayItem extends TaskResponse {
   },
   providers: [ConfirmationService],
   imports: [
-    FormsModule,
-    DatePipe,
     BadgeModule,
     ButtonModule,
-    ChipModule,
     ConfirmDialogModule,
     DialogModule,
     DividerModule,
@@ -65,28 +43,12 @@ interface TaskDisplayItem extends TaskResponse {
     ScrollPanelModule,
     SelectModule,
     SplitterModule,
-    TagModule,
     TextareaModule,
-    TaskStatusLabelPipe,
-    TaskStatusIconPipe,
-    TaskStatusSeverityPipe,
     TaskDetailPanelComponent,
+    DashboardSidebarComponent,
+    TaskRowComponent,
   ],
   templateUrl: './dashboard.component.html',
-  styles: [
-    `
-      .task-row {
-        cursor: pointer;
-        border-radius: var(--p-border-radius);
-        padding: 1rem 0.5rem;
-        margin: 0 -0.5rem;
-        transition: background-color 0.15s ease;
-      }
-      .task-row:hover {
-        background-color: var(--p-content-hover-background);
-      }
-    `,
-  ],
 })
 // Smart component: owns all data, controls panel visibility, orchestrates confirmations
 // The child TaskDetailPanelComponent receives data via @Input and emits events via @Output
@@ -94,124 +56,14 @@ export class DashboardComponent {
   constructor(private confirmationService: ConfirmationService) {}
 
   // Mock data — will be replaced by NGXS store selectors when the backend is connected
-  private readonly rawCategories: CategoryDisplayItem[] = [
-    { id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', name: 'General', count: 4 },
-    { id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', name: 'Work', count: 6 },
-    { id: 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f', name: 'Personal', count: 2 },
-  ];
-
-  private readonly rawTags: TagResponse[] = [
-    {
-      id: 'd4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a',
-      name: 'Development',
-      userId: '00000000-0000-0000-0000-000000000001',
-    },
-    {
-      id: 'e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b',
-      name: 'Design',
-      userId: '00000000-0000-0000-0000-000000000001',
-    },
-    {
-      id: 'f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c',
-      name: 'Meetings',
-      userId: '00000000-0000-0000-0000-000000000001',
-    },
-  ];
-
-  private readonly rawTasks: TaskResponse[] = [
-    {
-      id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d',
-      title: 'Design landing page mockup',
-      description: 'Hola que tal buenas tardes',
-      dueDate: new Date('2026-06-05'),
-      status: TaskStatus.InProgress,
-      categoryId: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d',
-      subTasks: [
-        { title: 'Research UI patterns', isDone: false },
-        { title: 'Create wireframes', isDone: true },
-        { title: 'Prepare presentation', isDone: false },
-      ],
-      tags: [
-        {
-          id: 'e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b',
-          name: 'Design',
-          userId: '00000000-0000-0000-0000-000000000001',
-        },
-      ],
-    },
-    {
-      id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e',
-      title: 'Implement auth module',
-      description: null,
-      dueDate: new Date('2026-06-08'),
-      status: TaskStatus.NonStarted,
-      categoryId: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e',
-      subTasks: [
-        { title: 'Set up JWT service', isDone: false },
-        { title: 'Create login endpoint', isDone: false },
-        { title: 'Add token refresh', isDone: false },
-        { title: 'Write integration tests', isDone: false },
-        { title: 'Document API', isDone: false },
-      ],
-      tags: [
-        {
-          id: 'd4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a',
-          name: 'Development',
-          userId: '00000000-0000-0000-0000-000000000001',
-        },
-      ],
-    },
-    {
-      id: 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f',
-      title: 'Fix login validation bug',
-      description:
-        'Investigate and resolve the edge case causing false negatives on email validation.',
-      dueDate: new Date('2026-05-30'),
-      status: TaskStatus.Late,
-      categoryId: 'c3d4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f',
-      subTasks: [{ title: 'Reproduce bug', isDone: true }],
-      tags: [],
-    },
-    {
-      id: 'd4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a',
-      title: 'Write API documentation',
-      description: null,
-      dueDate: new Date('2026-06-12'),
-      status: TaskStatus.Paused,
-      categoryId: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d',
-      subTasks: [
-        { title: 'Document endpoints', isDone: false },
-        { title: 'Add code examples', isDone: false },
-      ],
-      tags: [
-        {
-          id: 'f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c',
-          name: 'Meetings',
-          userId: '00000000-0000-0000-0000-000000000001',
-        },
-      ],
-    },
-  ];
-
-  readonly categories: readonly CategoryDisplayItem[] = this.rawCategories;
-
-  readonly tags: readonly TagResponse[] = this.rawTags;
-
-  readonly statusItems: StatusSummaryItem[] = [
-    { status: TaskStatus.NonStarted, count: 3 },
-    { status: TaskStatus.InProgress, count: 5 },
-    { status: TaskStatus.Paused, count: 2 },
-    { status: TaskStatus.Late, count: 1 },
-    { status: TaskStatus.Finished, count: 6 },
-  ];
+  readonly categories = MOCK_CATEGORIES;
+  readonly tags = MOCK_TAGS;
+  readonly statusItems = MOCK_STATUS_ITEMS;
 
   // Enrich tasks with resolved category names for display
-  readonly tasks: TaskDisplayItem[] = this.rawTasks.map((task) => {
-    const cat = this.rawCategories.find((c) => c.id === task.categoryId);
-    return {
-      ...task,
-      categoryName: cat?.name ?? '',
-    };
+  readonly tasks: TaskDisplayItem[] = MOCK_TASKS.map((task) => {
+    const cat = MOCK_CATEGORIES.find((c) => c.id === task.categoryId);
+    return { ...task, categoryName: cat?.name ?? '' };
   });
 
   // Form options for the child panel's select/multiselect dropdowns
@@ -223,18 +75,38 @@ export class DashboardComponent {
     { label: 'Finished', value: TaskStatus.Finished },
   ];
 
-  readonly categoryOptions: SelectOption[] = this.rawCategories.map((c) => ({
+  readonly categoryOptions: SelectOption[] = MOCK_CATEGORIES.map((c) => ({
     label: c.name,
     value: c.id,
   }));
 
-  readonly tagOptions: SelectOption[] = this.rawTags.map((t) => ({
+  readonly tagOptions: SelectOption[] = MOCK_TAGS.map((t) => ({
     label: t.name,
     value: t.id,
   }));
 
   showRightPanel = false;
   editingTask: TaskDisplayItem | null = null;
+
+  filterByStatus(status: TaskStatus): void {
+    // TODO: Filter task list by status
+  }
+
+  addCategory(): void {
+    // TODO: Open add category dialog or inline input
+  }
+
+  addTag(): void {
+    // TODO: Open add tag dialog or inline input
+  }
+
+  openCalendar(): void {
+    // TODO: Navigate to calendar view or open date picker
+  }
+
+  logout(): void {
+    // TODO: Clear auth state and navigate to login
+  }
 
   openNewTaskPanel(): void {
     this.editingTask = null;
