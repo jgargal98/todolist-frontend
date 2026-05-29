@@ -74,19 +74,6 @@ interface TaskDisplayItem extends TaskResponse {
   templateUrl: './dashboard.component.html',
   styles: [
     `
-      @keyframes slideInRight {
-        from {
-          transform: translateX(100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
-      }
-      .panel-enter {
-        animation: slideInRight 0.25s ease-out;
-      }
       .task-row {
         cursor: pointer;
         border-radius: var(--p-border-radius);

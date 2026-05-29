@@ -105,78 +105,13 @@
               <span style="font-size: 0.8125rem; color: var(--p-primary-color)"
                 >Add New Category</span
               >
-            </div>
-          </div>
-
-          <!-- Tags Section -->
-          <div style="display: flex; flex-direction: column; gap: 0.35rem">
-            <span
-              style="
-                font-size: 0.7rem;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                color: var(--p-text-secondary-color);
-                padding: 0 0.5rem;
-              "
-              >Tags</span
-            >
-            <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0 0.5rem">
-              @for (tag of tags; track tag.id) {
-                <p-chip [label]="tag.name" />
-              }
-              <p-button
-                icon="pi pi-plus"
-                severity="secondary"
-                [link]="true"
-                [style]="{ 'font-size': '0.8125rem' }"
-              />
-            </div>
-          </div>
-
-          <!-- Spacer -->
-          <div style="flex: 1"></div>
-
-          <!-- Bottom Links -->
-          <div style="display: flex; flex-direction: column; gap: 0.15rem; padding: 0 0.5rem">
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.2rem 0.25rem;
-                cursor: default;
-              "
-            >
-              <i
-                class="pi pi-calendar"
-                style="font-size: 0.875rem; color: var(--p-text-secondary-color)"
-              ></i>
-              <span style="font-size: 0.8125rem">Calendar</span>
-            </div>
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.2rem 0.25rem;
-                cursor: default;
-              "
-            >
-              <i
-                class="pi pi-sign-out"
-                style="font-size: 0.875rem; color: var(--p-text-secondary-color)"
-              ></i>
-              <span style="font-size: 0.8125rem">Sign Out</span>
-            </div>
-          </div>
         </div>
       </div>
     </ng-template>
 
     <!-- Center Task Board -->
     <ng-template pTemplate="panel">
-      <div class="scroll-panel">
+      <p-scrollPanel style="height: 100%">
         <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem">
           <!-- Header with count -->
           <div style="display: flex; align-items: center; justify-content: space-between">
@@ -236,7 +171,7 @@
             }
           </div>
         </div>
-      </div>
+      </p-scrollPanel>
     </ng-template>
   </p-splitter>
 
