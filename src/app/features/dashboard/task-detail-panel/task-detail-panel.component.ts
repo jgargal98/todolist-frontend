@@ -1,9 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ConfirmationService } from 'primeng/api';
+import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DividerModule } from 'primeng/divider';
 import { InputTextModule } from 'primeng/inputtext';
@@ -13,6 +11,14 @@ import { TextareaModule } from 'primeng/textarea';
 
 import { TaskStatus } from '../../../shared/enums/task-status.enum';
 import type { CreateTaskRequest, SubTaskResponse, TaskResponse } from '../../../shared/models/dto';
+
+function futureDateValidator(): ValidatorFn {
+  return (control: AbstractControl) => {
+    if (!control.value) return null;
+    const date = new Date(control.value);
+    return date > new Date() ? null : { futureDate: 'Due date must be in the future' };
+  };
+}
 
 export interface SelectOption<T = string> {
   label: string;
@@ -26,10 +32,8 @@ export interface SelectOption<T = string> {
   },
   imports: [
     ReactiveFormsModule,
-    FormsModule,
     ButtonModule,
     CheckboxModule,
-    ConfirmDialogModule,
     DatePickerModule,
     DividerModule,
     InputTextModule,
@@ -37,7 +41,6 @@ export interface SelectOption<T = string> {
     SelectModule,
     TextareaModule,
   ],
-  providers: [ConfirmationService],
   templateUrl: './task-detail-panel.component.html',
   styles: [`
     @keyframes slideInRight {
@@ -57,12 +60,13 @@ export class TaskDetailPanelComponent {
 
   @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<CreateTaskRequest>();
+  @Output() deleteTask = new EventEmitter<string>();
 
   private _task: TaskResponse | null = null;
 
   @Input() set task(value: TaskResponse | null) {
     this._task = value;
-    this.subtaskBlurred = [];
+    this.subTasksFormArray.clear();
     if (value) {
       this.form.patchValue({
         title: value.title,
@@ -72,7 +76,7 @@ export class TaskDetailPanelComponent {
         dueDate: value.dueDate,
         tagIds: value.tags.map(t => t.id),
       });
-      this.subTasks = value.subTasks.map(s => ({ ...s }));
+      value.subTasks.forEach(s => this.subTasksFormArray.push(this.createSubTaskGroup(s)));
     } else {
       this.form.reset({
         title: '',
@@ -82,7 +86,6 @@ export class TaskDetailPanelComponent {
         dueDate: null,
         tagIds: [],
       });
-      this.subTasks = [];
     }
   }
 
@@ -91,59 +94,56 @@ export class TaskDetailPanelComponent {
   }
 
   readonly form = new FormGroup({
-    title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    description: new FormControl('', { nonNullable: true }),
+    title: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.maxLength(200)] }),
+    description: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(1000)] }),
     status: new FormControl(TaskStatus.NonStarted, { nonNullable: true }),
     categoryId: new FormControl<string | null>(null),
-    dueDate: new FormControl<Date | null>(null),
+    dueDate: new FormControl<Date | null>(null, { validators: [futureDateValidator()] }),
     tagIds: new FormControl<string[]>([], { nonNullable: true }),
+    subTasks: new FormArray<FormGroup>([], { validators: [] }),
   });
 
-  subTasks: SubTaskResponse[] = [];
-  subtaskBlurred: boolean[] = [];
+  get subTasksFormArray(): FormArray<FormGroup> {
+    return this.form.controls.subTasks;
+  }
 
   get isEditing(): boolean {
     return this._task !== null;
   }
 
   get canSave(): boolean {
-    return this.form.valid && this.subTasks.every(s => s.title.trim().length > 0);
+    return this.form.valid;
   }
 
-  constructor(private confirmationService: ConfirmationService) {}
-
-  addSubtask(): void {
-    this.subTasks = [...this.subTasks, { title: '', isDone: false }];
-    this.subtaskBlurred = [...this.subtaskBlurred, false];
-  }
-
-  removeSubtask(index: number): void {
-    this.subTasks = this.subTasks.filter((_, i) => i !== index);
-    this.subtaskBlurred = this.subtaskBlurred.filter((_, i) => i !== index);
-  }
-
-  onSubtaskBlur(index: number): void {
-    if (!this.subtaskBlurred[index]) {
-      this.subtaskBlurred[index] = true;
-    }
-  }
-
-  confirmDelete(): void {
-    this.confirmationService.confirm({
-      message: 'This action cannot be undone.',
-      header: 'Delete Task',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Yes, Delete',
-      rejectLabel: 'Cancel',
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.deleteConfirmed();
-      },
+  private createSubTaskGroup(subtask?: SubTaskResponse): FormGroup {
+    return new FormGroup({
+      title: new FormControl(subtask?.title ?? '', { nonNullable: true, validators: [Validators.required] }),
+      isDone: new FormControl(subtask?.isDone ?? false, { nonNullable: true }),
     });
   }
 
-  private deleteConfirmed(): void {
-    // Visual only — to be wired with NGXS
+  addSubtask(): void {
+    this.subTasksFormArray.push(this.createSubTaskGroup());
+  }
+
+  removeSubtask(index: number): void {
+    this.subTasksFormArray.removeAt(index);
+  }
+
+  onDeleteClick(): void {
+    if (this._task) {
+      this.deleteTask.emit(this._task.id);
+    }
+  }
+
+  getErrorMessage(control: AbstractControl | null): string {
+    if (!control || !control.errors || !control.touched) return '';
+    if (control.hasError('required')) return 'This field is required';
+    if (control.hasError('maxlength')) {
+      return `Must not exceed ${control.getError('maxlength').requiredLength} characters`;
+    }
+    if (control.hasError('futureDate')) return 'Due date must be in the future';
+    return '';
   }
 
   onSave(): void {
@@ -154,7 +154,7 @@ export class TaskDetailPanelComponent {
       dueDate: raw.dueDate ?? null,
       status: raw.status,
       categoryId: raw.categoryId ?? null,
-      subTasks: this.subTasks.map(s => ({ title: s.title, isDone: s.isDone })),
+      subTasks: ((raw.subTasks ?? []) as { title: string; isDone: boolean }[]).map(s => ({ title: s.title, isDone: s.isDone })),
       tagIds: raw.tagIds,
     });
   }

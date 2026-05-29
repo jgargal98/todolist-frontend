@@ -5,6 +5,8 @@ import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 
 import { ChipModule } from 'primeng/chip';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 import { DatePickerModule } from 'primeng/datepicker';
 import { DialogModule } from 'primeng/dialog';
 import { DividerModule } from 'primeng/divider';
@@ -48,12 +50,14 @@ interface TaskDisplayItem extends TaskResponse {
   host: {
     style: 'height: 100vh; width: 100vw; overflow: hidden; display: block;',
   },
+  providers: [ConfirmationService],
   imports: [
     FormsModule,
     DatePipe,
     BadgeModule,
     ButtonModule,
     ChipModule,
+    ConfirmDialogModule,
     DialogModule,
     DividerModule,
     InputTextModule,
@@ -97,6 +101,8 @@ interface TaskDisplayItem extends TaskResponse {
   ],
 })
 export class DashboardComponent {
+  constructor(private confirmationService: ConfirmationService) {}
+
   private readonly rawCategories: CategoryDisplayItem[] = [
     { id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d', name: 'General', count: 4 },
     { id: 'b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e', name: 'Work', count: 6 },
@@ -255,5 +261,16 @@ export class DashboardComponent {
   onSaveTask(request: CreateTaskRequest): void {
     console.log('Task to save:', request);
     this.closeRightPanel();
+  }
+
+  onDeleteTask(id: string): void {
+    this.confirmationService.confirm({
+      header: 'Delete Task',
+      message: 'Are you sure you want to delete this task?',
+      accept: () => {
+        console.log('Delete task:', id);
+        this.closeRightPanel();
+      },
+    });
   }
 }

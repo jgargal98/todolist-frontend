@@ -21,8 +21,8 @@
         placeholder="Enter task title"
         formControlName="title"
       />
-      @if (form.controls.title.invalid && form.controls.title.touched) {
-        <small style="color: var(--p-red-500); font-size: 0.75rem">Title is required</small>
+      @if (getErrorMessage(form.controls.title); as msg) {
+        <small style="color: var(--p-red-500); font-size: 0.75rem">{{ msg }}</small>
       }
     </div>
 
@@ -96,24 +96,22 @@
         <span style="font-size: 0.75rem; color: var(--p-primary-color)">Add</span>
       </div>
     </div>
-    <div style="display: flex; flex-direction: column; gap: 0.4rem">
-      @for (subtask of subTasks; track $index) {
-        <div style="display: flex; align-items: center; gap: 0.5rem">
-          <p-checkbox [binary]="true" [(ngModel)]="subtask.isDone" [ngModelOptions]="{standalone: true}" />
+    <div formArrayName="subTasks" style="display: flex; flex-direction: column; gap: 0.4rem">
+      @for (subtask of subTasksFormArray.controls; track $index) {
+        <div [formGroupName]="$index" style="display: flex; align-items: center; gap: 0.5rem">
+          <p-checkbox formControlName="isDone" [binary]="true" />
           <input
             pInputText
             [fluid]="true"
             placeholder="Subtask title"
-            [style.text-decoration]="subtask.isDone ? 'line-through' : 'none'"
-            [(ngModel)]="subtask.title"
-            [ngModelOptions]="{standalone: true}"
-            (blur)="onSubtaskBlur($index)"
+            [style.text-decoration]="subtask.get('isDone')?.value ? 'line-through' : 'none'"
+            formControlName="title"
           />
+          @if (getErrorMessage(subtask.get('title')); as msg) {
+            <small style="color: var(--p-red-500); font-size: 0.75rem">{{ msg }}</small>
+          }
           <p-button icon="pi pi-trash" severity="danger" [link]="true" (click)="removeSubtask($index)" />
         </div>
-        @if (subtask.title === '' && subtaskBlurred[$index]) {
-          <small style="color: var(--p-red-500); font-size: 0.75rem">Title is required</small>
-        }
       }
     </div>
 
@@ -125,11 +123,10 @@
         severity="danger"
         [fluid]="true"
         type="button"
-        (click)="confirmDelete()"
+        (click)="onDeleteClick()"
       />
     }
     <p-button label="Save Changes" [fluid]="true" severity="primary" type="submit" [disabled]="!canSave" (click)="onSave()" />
   </div>
 </form>
 
-<p-confirmDialog />

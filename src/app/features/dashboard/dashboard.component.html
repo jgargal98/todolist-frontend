@@ -250,9 +250,12 @@
       [tagOptions]="tagOptions"
       (close)="closeRightPanel()"
       (save)="onSaveTask($event)"
+      (deleteTask)="onDeleteTask($event)"
     />
   }
 </div>
+
+<p-confirmDialog />
 
 <!-- Structural Dialogs (no active event bindings) -->
 <p-dialog header="Add Task" [visible]="false" [modal]="true" [style]="{ width: '32rem' }">
