@@ -52,6 +52,8 @@ export interface SelectOption<T = string> {
     }
   `],
 })
+// Dumb/presentational component: receives task data, renders a form, emits events
+// No external dependencies — testable by setting @Input() and spying on @Output()
 export class TaskDetailPanelComponent {
   @Input() visible = false;
   @Input() statusOptions: SelectOption<number>[] = [];
@@ -136,6 +138,7 @@ export class TaskDetailPanelComponent {
     }
   }
 
+  // Centralized error messages — only shows after the control is touched
   getErrorMessage(control: AbstractControl | null): string {
     if (!control || !control.errors || !control.touched) return '';
     if (control.hasError('required')) return 'This field is required';
@@ -146,6 +149,7 @@ export class TaskDetailPanelComponent {
     return '';
   }
 
+  // Emits the raw form value as a CreateTaskRequest (nullable fields mapped correctly)
   onSave(): void {
     const raw = this.form.getRawValue();
     this.save.emit({

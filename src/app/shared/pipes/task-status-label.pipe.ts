@@ -5,6 +5,7 @@ import { TaskStatus } from '../enums/task-status.enum';
   name: 'taskStatusLabel',
   standalone: true,
 })
+// Maps the numeric TaskStatus enum to a human-readable label for display
 export class TaskStatusLabelPipe implements PipeTransform {
   transform(value: TaskStatus | undefined | null): string {
     switch (value) {

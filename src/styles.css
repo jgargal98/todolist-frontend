@@ -1,5 +1,7 @@
+/* PrimeNG component styles are loaded into this layer so custom resets can override them */
 @layer primeng;
 
+/* Reset and full-viewport base */
 *,
 *::before,
 *::after {

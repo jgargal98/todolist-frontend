@@ -1,6 +1,8 @@
 import type { TaskStatus } from '../../enums/task-status.enum';
 import type { TagResponse } from './tag.dto';
 
+// Mirror the backend .NET DTOs 1:1 — these are the API contracts
+
 export interface SubTaskResponse {
   title: string;
   isDone: boolean;

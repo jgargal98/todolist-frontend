@@ -5,6 +5,7 @@ import { TaskStatus } from '../enums/task-status.enum';
   name: 'taskStatusIcon',
   standalone: true,
 })
+// Maps TaskStatus to a PrimeIcon class for the sidebar status list
 export class TaskStatusIconPipe implements PipeTransform {
   transform(value: TaskStatus | undefined | null): string {
     switch (value) {

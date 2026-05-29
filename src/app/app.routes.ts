@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 
+// All feature routes are lazy-loaded — each feature is a standalone entry point
 export const routes: Routes = [
   {
     path: '',
