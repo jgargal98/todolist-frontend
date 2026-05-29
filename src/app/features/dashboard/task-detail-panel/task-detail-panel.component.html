@@ -22,7 +22,7 @@
         formControlName="title"
       />
       @if (getErrorMessage(form.controls.title); as msg) {
-        <small style="color: var(--p-red-500); font-size: 0.75rem">{{ msg }}</small>
+        <small class="p-error">{{ msg }}</small>
       }
     </div>
 
@@ -88,13 +88,7 @@
     <p-divider style="margin: 0.15rem 0" />
     <div style="display: flex; align-items: center; justify-content: space-between">
       <span style="font-size: 0.8125rem; font-weight: 600">Subtasks</span>
-      <div
-        style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer"
-        (click)="addSubtask()"
-      >
-        <i class="pi pi-plus" style="font-size: 0.65rem; color: var(--p-primary-color)"></i>
-        <span style="font-size: 0.75rem; color: var(--p-primary-color)">Add</span>
-      </div>
+      <p-button icon="pi pi-plus" [link]="true" severity="secondary" (click)="addSubtask()">Add</p-button>
     </div>
     <div formArrayName="subTasks" style="display: flex; flex-direction: column; gap: 0.4rem">
       @for (subtask of subTasksFormArray.controls; track $index) {
@@ -108,7 +102,7 @@
             formControlName="title"
           />
           @if (getErrorMessage(subtask.get('title')); as msg) {
-            <small style="color: var(--p-red-500); font-size: 0.75rem">{{ msg }}</small>
+            <small class="p-error">{{ msg }}</small>
           }
           <p-button icon="pi pi-trash" severity="danger" [link]="true" (click)="removeSubtask($index)" />
         </div>
