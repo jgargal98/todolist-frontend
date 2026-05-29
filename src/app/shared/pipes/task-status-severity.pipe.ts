@@ -6,7 +6,7 @@ import { TaskStatus } from '../enums/task-status.enum';
   standalone: true,
 })
 export class TaskStatusSeverityPipe implements PipeTransform {
-  transform(value: TaskStatus | undefined | null): string {
+  transform(value: TaskStatus | undefined | null): 'info' | 'success' | 'warn' | 'danger' | 'secondary' | 'contrast' {
     switch (value) {
       case TaskStatus.NonStarted: return 'secondary';
       case TaskStatus.InProgress: return 'info';

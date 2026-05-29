@@ -1,0 +1,125 @@
+<form
+  class="panel-enter"
+  [formGroup]="form"
+  style="height: 100%; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none"
+>
+  <div
+    style="padding: 0.75rem; display: flex; flex-direction: column; gap: 0.625rem; min-height: 100%"
+  >
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <span style="font-size: 1.05rem; font-weight: 600">{{ isEditing ? 'Edit Task' : 'Create Task' }}</span>
+      <p-button icon="pi pi-times" severity="secondary" [link]="true" (click)="close.emit()" />
+    </div>
+
+    <!-- Title -->
+    <div style="display: flex; flex-direction: column; gap: 0.3rem">
+      <label for="taskTitle" style="font-size: 0.8125rem; font-weight: 500">Title</label>
+      <input
+        id="taskTitle"
+        pInputText
+        [fluid]="true"
+        placeholder="Enter task title"
+        formControlName="title"
+      />
+    </div>
+
+    <!-- Description -->
+    <div style="display: flex; flex-direction: column; gap: 0.3rem">
+      <label for="taskDesc" style="font-size: 0.8125rem; font-weight: 500">Description</label>
+      <textarea
+        id="taskDesc"
+        pTextarea
+        [fluid]="true"
+        rows="2"
+        placeholder="Enter description"
+        formControlName="description"
+      ></textarea>
+    </div>
+
+    <!-- Classification Row -->
+    <p-divider style="margin: 0.15rem 0" />
+    <span
+      style="
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--p-text-secondary-color);
+      "
+      >Classification</span
+    >
+    <div style="display: flex; flex-direction: column; gap: 0.5rem">
+      <p-select
+        [options]="statusOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select status"
+        [fluid]="true"
+        formControlName="status"
+      />
+      <p-select
+        [options]="categoryOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select category"
+        [fluid]="true"
+        formControlName="categoryId"
+      />
+      <p-datepicker placeholder="Select date" [fluid]="true" formControlName="dueDate" />
+      <div style="display: flex; align-items: center; gap: 0.35rem">
+        <p-multiselect
+          [options]="tagOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Select tags"
+          [fluid]="true"
+          style="flex: 1"
+          formControlName="tagIds"
+        />
+        <p-button icon="pi pi-plus" severity="secondary" [link]="true" />
+      </div>
+    </div>
+
+    <!-- Subtasks Section -->
+    <p-divider style="margin: 0.15rem 0" />
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <span style="font-size: 0.8125rem; font-weight: 600">Subtasks</span>
+      <div
+        style="display: flex; align-items: center; gap: 0.25rem; cursor: pointer"
+        (click)="addSubtask()"
+      >
+        <i class="pi pi-plus" style="font-size: 0.65rem; color: var(--p-primary-color)"></i>
+        <span style="font-size: 0.75rem; color: var(--p-primary-color)">Add</span>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 0.4rem">
+      @for (subtask of subTasks; track $index) {
+        <div style="display: flex; align-items: center; gap: 0.5rem">
+          <p-checkbox [binary]="true" [(ngModel)]="subtask.isDone" [ngModelOptions]="{standalone: true}" />
+          <span
+            style="flex: 1; font-size: 0.8125rem"
+            [style.text-decoration]="subtask.isDone ? 'line-through' : 'none'"
+            [style.color]="subtask.isDone ? 'var(--p-text-secondary-color)' : 'var(--p-text-color)'"
+            >{{ subtask.title }}</span
+          >
+          <p-button icon="pi pi-trash" severity="danger" [link]="true" (click)="removeSubtask($index)" />
+        </div>
+      }
+    </div>
+
+    <!-- Action Buttons -->
+    @if (isEditing) {
+      <p-button
+        label="Delete Task"
+        icon="pi pi-trash"
+        severity="danger"
+        [fluid]="true"
+        type="button"
+        (click)="confirmDelete()"
+      />
+    }
+    <p-button label="Save Changes" [fluid]="true" severity="primary" type="submit" (click)="onSave()" />
+  </div>
+</form>
+
+<p-confirmDialog />
