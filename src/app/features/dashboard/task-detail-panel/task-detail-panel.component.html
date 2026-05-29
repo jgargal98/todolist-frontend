@@ -21,6 +21,9 @@
         placeholder="Enter task title"
         formControlName="title"
       />
+      @if (form.controls.title.invalid && form.controls.title.touched) {
+        <small style="color: var(--p-red-500); font-size: 0.75rem">Title is required</small>
+      }
     </div>
 
     <!-- Description -->
@@ -63,6 +66,7 @@
         optionValue="value"
         placeholder="Select category"
         [fluid]="true"
+        [showClear]="true"
         formControlName="categoryId"
       />
       <p-datepicker placeholder="Select date" [fluid]="true" formControlName="dueDate" />
@@ -96,14 +100,20 @@
       @for (subtask of subTasks; track $index) {
         <div style="display: flex; align-items: center; gap: 0.5rem">
           <p-checkbox [binary]="true" [(ngModel)]="subtask.isDone" [ngModelOptions]="{standalone: true}" />
-          <span
-            style="flex: 1; font-size: 0.8125rem"
+          <input
+            pInputText
+            [fluid]="true"
+            placeholder="Subtask title"
             [style.text-decoration]="subtask.isDone ? 'line-through' : 'none'"
-            [style.color]="subtask.isDone ? 'var(--p-text-secondary-color)' : 'var(--p-text-color)'"
-            >{{ subtask.title }}</span
-          >
+            [(ngModel)]="subtask.title"
+            [ngModelOptions]="{standalone: true}"
+            (blur)="onSubtaskBlur($index)"
+          />
           <p-button icon="pi pi-trash" severity="danger" [link]="true" (click)="removeSubtask($index)" />
         </div>
+        @if (subtask.title === '' && subtaskBlurred[$index]) {
+          <small style="color: var(--p-red-500); font-size: 0.75rem">Title is required</small>
+        }
       }
     </div>
 
@@ -118,7 +128,7 @@
         (click)="confirmDelete()"
       />
     }
-    <p-button label="Save Changes" [fluid]="true" severity="primary" type="submit" (click)="onSave()" />
+    <p-button label="Save Changes" [fluid]="true" severity="primary" type="submit" [disabled]="!canSave" (click)="onSave()" />
   </div>
 </form>
 
