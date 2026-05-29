@@ -83,6 +83,16 @@ interface TaskDisplayItem extends TaskResponse {
       .panel-enter {
         animation: slideInRight 0.25s ease-out;
       }
+      .task-row {
+        cursor: pointer;
+        border-radius: var(--p-border-radius);
+        padding: 1rem 0.5rem;
+        margin: 0 -0.5rem;
+        transition: background-color 0.15s ease;
+      }
+      .task-row:hover {
+        background-color: var(--p-content-hover-background);
+      }
     `,
   ],
 })
@@ -115,7 +125,7 @@ export class DashboardComponent {
     {
       id: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d',
       title: 'Design landing page mockup',
-      description: null,
+      description: 'Hola que tal buenas tardes',
       dueDate: new Date('2026-06-05'),
       status: TaskStatus.InProgress,
       categoryId: 'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d',
@@ -225,13 +235,21 @@ export class DashboardComponent {
   }));
 
   showRightPanel = false;
+  editingTask: TaskDisplayItem | null = null;
 
   openNewTaskPanel(): void {
+    this.editingTask = null;
+    this.showRightPanel = true;
+  }
+
+  editTask(task: TaskDisplayItem): void {
+    this.editingTask = task;
     this.showRightPanel = true;
   }
 
   closeRightPanel(): void {
     this.showRightPanel = false;
+    this.editingTask = null;
   }
 
   onSaveTask(request: CreateTaskRequest): void {

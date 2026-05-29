@@ -194,7 +194,7 @@
           <!-- Task List -->
           <div style="display: flex; flex-direction: column">
             @for (task of tasks; track task.id) {
-              <div style="padding: 1rem 0">
+              <div class="task-row" (click)="editTask(task)">
                 <!-- Title row -->
                 <div style="display: flex; align-items: center; justify-content: space-between">
                   <div style="display: flex; align-items: center; gap: 0.5rem">
@@ -242,6 +242,7 @@
   @if (showRightPanel) {
     <task-detail-panel
       [visible]="showRightPanel"
+      [task]="editingTask"
       [statusOptions]="statusOptions"
       [categoryOptions]="categoryOptions"
       [tagOptions]="tagOptions"

@@ -1,12 +1,13 @@
-<div
+<form
   class="panel-enter"
+  [formGroup]="form"
   style="height: 100%; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none"
 >
   <div
     style="padding: 0.75rem; display: flex; flex-direction: column; gap: 0.625rem; min-height: 100%"
   >
     <div style="display: flex; align-items: center; justify-content: space-between">
-      <span style="font-size: 1.05rem; font-weight: 600">Create new task</span>
+      <span style="font-size: 1.05rem; font-weight: 600">{{ isEditing ? 'Edit Task' : 'Create Task' }}</span>
       <p-button icon="pi pi-times" severity="secondary" [link]="true" (click)="close.emit()" />
     </div>
 
@@ -18,7 +19,7 @@
         pInputText
         [fluid]="true"
         placeholder="Enter task title"
-        [(ngModel)]="title"
+        formControlName="title"
       />
     </div>
 
@@ -31,7 +32,7 @@
         [fluid]="true"
         rows="2"
         placeholder="Enter description"
-        [(ngModel)]="description"
+        formControlName="description"
       ></textarea>
     </div>
 
@@ -54,7 +55,7 @@
         optionValue="value"
         placeholder="Select status"
         [fluid]="true"
-        [(ngModel)]="selectedStatus"
+        formControlName="status"
       />
       <p-select
         [options]="categoryOptions"
@@ -62,9 +63,9 @@
         optionValue="value"
         placeholder="Select category"
         [fluid]="true"
-        [(ngModel)]="selectedCategory"
+        formControlName="categoryId"
       />
-      <p-datepicker placeholder="Select date" [fluid]="true" [(ngModel)]="selectedDate" />
+      <p-datepicker placeholder="Select date" [fluid]="true" formControlName="dueDate" />
       <div style="display: flex; align-items: center; gap: 0.35rem">
         <p-multiselect
           [options]="tagOptions"
@@ -73,7 +74,7 @@
           placeholder="Select tags"
           [fluid]="true"
           style="flex: 1"
-          [(ngModel)]="selectedTags"
+          formControlName="tagIds"
         />
         <p-button icon="pi pi-plus" severity="secondary" [link]="true" />
       </div>
@@ -92,21 +93,33 @@
       </div>
     </div>
     <div style="display: flex; flex-direction: column; gap: 0.4rem">
-      @for (subtask of subtasks; track subtask.title; let i = $index) {
+      @for (subtask of subTasks; track $index) {
         <div style="display: flex; align-items: center; gap: 0.5rem">
-          <p-checkbox [binary]="true" [(ngModel)]="subtask.isDone" />
+          <p-checkbox [binary]="true" [(ngModel)]="subtask.isDone" [ngModelOptions]="{standalone: true}" />
           <span
             style="flex: 1; font-size: 0.8125rem"
             [style.text-decoration]="subtask.isDone ? 'line-through' : 'none'"
             [style.color]="subtask.isDone ? 'var(--p-text-secondary-color)' : 'var(--p-text-color)'"
             >{{ subtask.title }}</span
           >
-          <p-button icon="pi pi-trash" severity="danger" [link]="true" (click)="removeSubtask(i)" />
+          <p-button icon="pi pi-trash" severity="danger" [link]="true" (click)="removeSubtask($index)" />
         </div>
       }
     </div>
 
-    <!-- Save Button -->
-    <p-button label="Save Changes" [fluid]="true" severity="primary" (click)="onSave()" />
+    <!-- Action Buttons -->
+    @if (isEditing) {
+      <p-button
+        label="Delete Task"
+        icon="pi pi-trash"
+        severity="danger"
+        [fluid]="true"
+        type="button"
+        (click)="confirmDelete()"
+      />
+    }
+    <p-button label="Save Changes" [fluid]="true" severity="primary" type="submit" (click)="onSave()" />
   </div>
-</div>
+</form>
+
+<p-confirmDialog />
