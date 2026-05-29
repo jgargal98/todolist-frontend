@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -62,6 +62,7 @@ export class TaskDetailPanelComponent {
 
   @Input() set task(value: TaskResponse | null) {
     this._task = value;
+    this.subtaskBlurred = [];
     if (value) {
       this.form.patchValue({
         title: value.title,
@@ -76,7 +77,7 @@ export class TaskDetailPanelComponent {
       this.form.reset({
         title: '',
         description: '',
-        status: null,
+        status: TaskStatus.NonStarted,
         categoryId: null,
         dueDate: null,
         tagIds: [],
@@ -90,28 +91,41 @@ export class TaskDetailPanelComponent {
   }
 
   readonly form = new FormGroup({
-    title: new FormControl('', { nonNullable: true }),
+    title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     description: new FormControl('', { nonNullable: true }),
-    status: new FormControl<number | null>(null),
+    status: new FormControl(TaskStatus.NonStarted, { nonNullable: true }),
     categoryId: new FormControl<string | null>(null),
     dueDate: new FormControl<Date | null>(null),
     tagIds: new FormControl<string[]>([], { nonNullable: true }),
   });
 
   subTasks: SubTaskResponse[] = [];
+  subtaskBlurred: boolean[] = [];
 
   get isEditing(): boolean {
     return this._task !== null;
+  }
+
+  get canSave(): boolean {
+    return this.form.valid && this.subTasks.every(s => s.title.trim().length > 0);
   }
 
   constructor(private confirmationService: ConfirmationService) {}
 
   addSubtask(): void {
     this.subTasks = [...this.subTasks, { title: '', isDone: false }];
+    this.subtaskBlurred = [...this.subtaskBlurred, false];
   }
 
   removeSubtask(index: number): void {
     this.subTasks = this.subTasks.filter((_, i) => i !== index);
+    this.subtaskBlurred = this.subtaskBlurred.filter((_, i) => i !== index);
+  }
+
+  onSubtaskBlur(index: number): void {
+    if (!this.subtaskBlurred[index]) {
+      this.subtaskBlurred[index] = true;
+    }
   }
 
   confirmDelete(): void {
@@ -138,7 +152,7 @@ export class TaskDetailPanelComponent {
       title: raw.title,
       description: raw.description || null,
       dueDate: raw.dueDate ?? null,
-      status: raw.status ?? TaskStatus.NonStarted,
+      status: raw.status,
       categoryId: raw.categoryId ?? null,
       subTasks: this.subTasks.map(s => ({ title: s.title, isDone: s.isDone })),
       tagIds: raw.tagIds,
