@@ -18,7 +18,7 @@ describe('TaskDetailPanelComponent', () => {
         { title: 'Subtask 1', isDone: false },
         { title: 'Subtask 2', isDone: true },
       ],
-      tags: [{ id: 'tag-1', name: 'Design', userId: 'user-1' }],
+      tags: [{ id: 'tag-1', name: 'Design' }],
       ...overrides,
     };
   }

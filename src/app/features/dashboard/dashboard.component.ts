@@ -104,17 +104,14 @@ export class DashboardComponent {
     {
       id: 'd4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a',
       name: 'Development',
-      userId: '00000000-0000-0000-0000-000000000001',
     },
     {
       id: 'e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b',
       name: 'Design',
-      userId: '00000000-0000-0000-0000-000000000001',
     },
     {
       id: 'f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c',
       name: 'Meetings',
-      userId: '00000000-0000-0000-0000-000000000001',
     },
   ];
 
@@ -135,7 +132,6 @@ export class DashboardComponent {
         {
           id: 'e5f6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b',
           name: 'Design',
-          userId: '00000000-0000-0000-0000-000000000001',
         },
       ],
     },
@@ -157,7 +153,6 @@ export class DashboardComponent {
         {
           id: 'd4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a',
           name: 'Development',
-          userId: '00000000-0000-0000-0000-000000000001',
         },
       ],
     },
@@ -187,7 +182,6 @@ export class DashboardComponent {
         {
           id: 'f6a7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c',
           name: 'Meetings',
-          userId: '00000000-0000-0000-0000-000000000001',
         },
       ],
     },
