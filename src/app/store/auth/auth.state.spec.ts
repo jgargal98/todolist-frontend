@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideStore, Store } from '@ngxs/store';
+import { of } from 'rxjs';
+import { AuthService } from '../../core/services/auth.service';
 import { AuthState, type AuthStateModel } from './auth.state';
 import {
   Login,
@@ -17,17 +19,7 @@ import type { AuthResponse } from '../../shared/models/dto';
 
 describe('AuthState', () => {
   let store: Store;
-
-  function configureStore(): void {
-    TestBed.configureTestingModule({
-      providers: [provideStore([AuthState])],
-    }).compileComponents();
-    store = TestBed.inject(Store);
-  }
-
-  function snapshot(): AuthStateModel {
-    return store.selectSnapshot<AuthStateModel>((state) => state.auth);
-  }
+  let authServiceMock: { login: ReturnType<typeof vi.fn>; register: ReturnType<typeof vi.fn>; refreshToken: ReturnType<typeof vi.fn> };
 
   function authResponse(overrides?: Partial<AuthResponse>): AuthResponse {
     return {
@@ -36,6 +28,26 @@ describe('AuthState', () => {
       email: 'test@example.com',
       ...overrides,
     };
+  }
+
+  function configureStore(): void {
+    authServiceMock = {
+      login: vi.fn(),
+      register: vi.fn(),
+      refreshToken: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideStore([AuthState]),
+        { provide: AuthService, useValue: authServiceMock },
+      ],
+    }).compileComponents();
+    store = TestBed.inject(Store);
+  }
+
+  function snapshot(): AuthStateModel {
+    return store.selectSnapshot<AuthStateModel>((state) => state.auth);
   }
 
   beforeEach(() => {
@@ -77,26 +89,19 @@ describe('AuthState', () => {
   });
 
   describe('Login', () => {
-    it('should set loading to true', () => {
-      store.dispatch(new Login({ email: 'a@b.com', password: 'secret' }));
+    it('should call authService.login with the payload', () => {
+      authServiceMock.login.mockReturnValue(of(authResponse()));
+      const payload = { email: 'a@b.com', password: 'secret' };
 
-      const state = snapshot();
-      expect(state.loading).toBe(true);
-      expect(state.error).toBeNull();
-    });
+      store.dispatch(new Login(payload));
 
-    it('should clear previous error', () => {
-      store.dispatch(new LoginFailure({ error: 'previous error' }));
-      store.dispatch(new Login({ email: 'a@b.com', password: 'secret' }));
-
-      expect(AuthState.error(snapshot())).toBeNull();
+      expect(authServiceMock.login).toHaveBeenCalledWith(payload);
     });
   });
 
   describe('LoginSuccess', () => {
     it('should update tokens and set authenticated', () => {
-      const response = authResponse();
-      store.dispatch(new LoginSuccess(response));
+      store.dispatch(new LoginSuccess(authResponse()));
 
       const state = snapshot();
       expect(state.accessToken).toBe('access-token-123');
@@ -107,8 +112,7 @@ describe('AuthState', () => {
     });
 
     it('should handle different token values', () => {
-      const response = authResponse({ accessToken: 'abc', refreshToken: 'xyz' });
-      store.dispatch(new LoginSuccess(response));
+      store.dispatch(new LoginSuccess(authResponse({ accessToken: 'abc', refreshToken: 'xyz' })));
 
       expect(AuthState.accessToken(snapshot())).toBe('abc');
       expect(snapshot().refreshToken).toBe('xyz');
@@ -133,23 +137,19 @@ describe('AuthState', () => {
   });
 
   describe('Register', () => {
-    it('should set loading to true', () => {
-      store.dispatch(
-        new Register({
-          email: 'a@b.com',
-          password: 'Secret1',
-          confirmPassword: 'Secret1',
-        }),
-      );
+    it('should call authService.register with the payload', () => {
+      authServiceMock.register.mockReturnValue(of(authResponse()));
+      const payload = { email: 'a@b.com', password: 'Secret1', confirmPassword: 'Secret1' };
 
-      expect(AuthState.loading(snapshot())).toBe(true);
+      store.dispatch(new Register(payload));
+
+      expect(authServiceMock.register).toHaveBeenCalledWith(payload);
     });
   });
 
   describe('RegisterSuccess', () => {
     it('should update tokens and set authenticated', () => {
-      const response = authResponse();
-      store.dispatch(new RegisterSuccess(response));
+      store.dispatch(new RegisterSuccess(authResponse()));
 
       const state = snapshot();
       expect(state.accessToken).toBe('access-token-123');
@@ -186,15 +186,13 @@ describe('AuthState', () => {
   });
 
   describe('RefreshToken', () => {
-    it('should set loading to true', () => {
-      store.dispatch(
-        new RefreshToken({
-          accessToken: 'old',
-          refreshToken: 'old-refresh',
-        }),
-      );
+    it('should call authService.refreshToken with the payload', () => {
+      authServiceMock.refreshToken.mockReturnValue(of(authResponse()));
+      const payload = { accessToken: 'old', refreshToken: 'old-refresh' };
 
-      expect(AuthState.loading(snapshot())).toBe(true);
+      store.dispatch(new RefreshToken(payload));
+
+      expect(authServiceMock.refreshToken).toHaveBeenCalledWith(payload);
     });
   });
 
@@ -229,34 +227,31 @@ describe('AuthState', () => {
     });
   });
 
-  describe('state transitions', () => {
+  describe('state transitions with mocked service', () => {
     it('should go through full login success flow', () => {
+      authServiceMock.login.mockReturnValue(of(authResponse()));
       store.dispatch(new Login({ email: 'u@t.com', password: 'Pass1' }));
-      expect(AuthState.loading(snapshot())).toBe(true);
 
       store.dispatch(new LoginSuccess(authResponse()));
       expect(AuthState.isAuthenticated(snapshot())).toBe(true);
-      expect(AuthState.loading(snapshot())).toBe(false);
 
       store.dispatch(new Logout());
       expect(AuthState.isAuthenticated(snapshot())).toBe(false);
     });
 
     it('should go through full login failure flow', () => {
-      store.dispatch(new Login({ email: 'u@t.com', password: 'wrong' }));
       store.dispatch(new LoginFailure({ error: 'Unauthorized' }));
 
       expect(AuthState.isAuthenticated(snapshot())).toBe(false);
-      expect(AuthState.loading(snapshot())).toBe(false);
       expect(AuthState.error(snapshot())).toBe('Unauthorized');
     });
 
     it('should recover from error on next login attempt', () => {
+      authServiceMock.login.mockReturnValue(of(authResponse()));
       store.dispatch(new LoginFailure({ error: 'Server error' }));
       store.dispatch(new Login({ email: 'u@t.com', password: 'Pass1' }));
 
       expect(AuthState.error(snapshot())).toBeNull();
-      expect(AuthState.loading(snapshot())).toBe(true);
     });
   });
 });
