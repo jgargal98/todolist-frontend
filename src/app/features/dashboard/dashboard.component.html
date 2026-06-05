@@ -24,6 +24,14 @@
               style="font-size: 1.25rem; color: var(--p-primary-color)"
             ></i>
             <span style="font-size: 1.05rem; font-weight: 600">TodoList</span>
+            <div style="margin-left: auto">
+              <p-button
+                icon="pi pi-sign-out"
+                [link]="true"
+                severity="secondary"
+                (click)="logout()"
+              />
+            </div>
           </div>
 
           <!-- Status Section -->
