@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import { catchError, Observable, switchMap } from 'rxjs';
+import { catchError, Observable, of, switchMap } from 'rxjs';
 import { TaskService } from '../../core/services/task.service';
 import type {
   CategoryResponse,
+  SubTaskResponse,
   TagResponse,
   TaskResponse,
 } from '../../shared/models/dto';
@@ -165,7 +166,25 @@ export class TasksState {
   ): Observable<unknown> {
     ctx.patchState({ loading: true, error: null });
     return this.taskService.updateTask(action.id, action.payload).pipe(
-      switchMap((response) => ctx.dispatch(new UpdateTaskSuccess(response))),
+      switchMap(() => {
+        const { tasks } = ctx.getState();
+        const existing = tasks.find((t) => t.id === action.id);
+        if (!existing) {
+          ctx.patchState({ loading: false });
+          return of(void 0);
+        }
+        return ctx.dispatch(
+          new UpdateTaskSuccess({
+            ...existing,
+            title: action.payload.title,
+            description: action.payload.description,
+            dueDate: action.payload.dueDate,
+            status: action.payload.status,
+            categoryId: action.payload.categoryId,
+            subTasks: action.payload.subTasks as SubTaskResponse[],
+          }),
+        );
+      }),
       catchError((err: unknown) => {
         const message =
           err instanceof Error ? err.message : 'Failed to update task';
