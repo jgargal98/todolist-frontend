@@ -47,7 +47,7 @@
               "
               >Status</span
             >
-            @for (item of statusItems; track item.status) {
+            @for (item of statusItems(); track item.status) {
               <div
                 style="
                   display: flex;
@@ -83,7 +83,7 @@
               "
               >Categories</span
             >
-            @for (cat of categories; track cat.id) {
+            @for (cat of categories(); track cat.id) {
               <div
                 style="
                   display: flex;
@@ -127,7 +127,7 @@
           <div style="display: flex; align-items: center; justify-content: space-between">
             <div style="display: flex; align-items: center; gap: 0.75rem">
               <span style="font-size: 1.5rem; font-weight: 600">All Tasks</span>
-              <p-badge [value]="tasks.length" severity="secondary" />
+              <p-badge [value]="tasks().length" severity="secondary" />
             </div>
           </div>
 
@@ -138,7 +138,7 @@
 
           <!-- Task List -->
           <div style="display: flex; flex-direction: column">
-            @for (task of tasks; track task.id) {
+            @for (task of tasks(); track task.id) {
               <div class="task-row" (click)="editTask(task)">
                 <!-- Title row -->
                 <div style="display: flex; align-items: center; justify-content: space-between">
@@ -191,8 +191,8 @@
       [visible]="showRightPanel"
       [task]="editingTask"
       [statusOptions]="statusOptions"
-      [categoryOptions]="categoryOptions"
-      [tagOptions]="tagOptions"
+      [categoryOptions]="categoryOptions()"
+      [tagOptions]="tagOptions()"
       (close)="closeRightPanel()"
       (save)="onSaveTask($event)"
       (deleteTask)="onDeleteTask($event)"
