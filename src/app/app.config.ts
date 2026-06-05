@@ -1,13 +1,16 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { provideStore } from '@ngxs/store';
 import { providePrimeNG } from 'primeng/config';
 import Nora from '@primeuix/themes/nora';
 
 import { routes } from './app.routes';
+import { AppStates } from './store';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
+    provideStore(AppStates),
     // PrimeNG theme preset + dark mode via CSS class toggle
     providePrimeNG({
       ripple: true,
