@@ -61,9 +61,14 @@
           <a routerLink="/forgot-password" style="font-size: 0.8125rem; color: var(--p-primary-color); font-weight: 500; text-decoration: none; cursor: default;">Forgot password?</a>
         </div>
 
+        @if (error(); as err) {
+          <small style="color: var(--p-red-400); text-align: center;">{{ err }}</small>
+        }
+
         <p-button
           type="submit"
-          [disabled]="loginForm.invalid"
+          [disabled]="loginForm.invalid || loading()"
+          [loading]="loading()"
           label="Sign In"
           [fluid]="true"
         />
