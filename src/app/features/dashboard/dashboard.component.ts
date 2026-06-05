@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Store } from '@ngxs/store';
 import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 
@@ -22,6 +24,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { TaskStatus } from '../../shared/enums/task-status.enum';
 import type { CategoryResponse, TagResponse, TaskResponse } from '../../shared/models/dto';
 import type { CreateTaskRequest } from '../../shared/models/dto';
+import { Logout } from '../../store/auth/auth.actions';
 import {
   TaskStatusIconPipe,
   TaskStatusLabelPipe,
@@ -91,6 +94,9 @@ interface TaskDisplayItem extends TaskResponse {
 // Smart component: owns all data, controls panel visibility, orchestrates confirmations
 // The child TaskDetailPanelComponent receives data via @Input and emits events via @Output
 export class DashboardComponent {
+  private readonly store = inject(Store);
+  private readonly router = inject(Router);
+
   constructor(private confirmationService: ConfirmationService) {}
 
   // Mock data — will be replaced by NGXS store selectors when the backend is connected
@@ -243,6 +249,11 @@ export class DashboardComponent {
   closeRightPanel(): void {
     this.showRightPanel = false;
     this.editingTask = null;
+  }
+
+  logout(): void {
+    this.store.dispatch(new Logout());
+    this.router.navigate(['/login']);
   }
 
   // Called when the child panel emits a save event
