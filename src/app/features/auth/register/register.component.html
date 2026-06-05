@@ -80,9 +80,14 @@
           }
         </div>
 
+        @if (error(); as err) {
+          <small style="color: var(--p-red-400); text-align: center;">{{ err }}</small>
+        }
+
         <p-button
           type="submit"
-          [disabled]="registerForm.invalid"
+          [disabled]="registerForm.invalid || loading()"
+          [loading]="loading()"
           label="Sign Up"
           [fluid]="true"
         />

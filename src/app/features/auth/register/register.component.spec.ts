@@ -1,16 +1,33 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideStore, Store } from '@ngxs/store';
+import { of } from 'rxjs';
+import { AuthService } from '../../../core/services/auth.service';
+import { AuthState } from '../../../store/auth/auth.state';
 import { RegisterComponent } from './register.component';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
+  let store: Store;
+  let authServiceMock: { login: ReturnType<typeof vi.fn>; register: ReturnType<typeof vi.fn>; refreshToken: ReturnType<typeof vi.fn> };
 
   beforeEach(async () => {
+    authServiceMock = {
+      login: vi.fn(),
+      register: vi.fn(),
+      refreshToken: vi.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [RegisterComponent],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        provideStore([AuthState]),
+        { provide: AuthService, useValue: authServiceMock },
+      ],
     }).compileComponents();
 
+    store = TestBed.inject(Store);
     const fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
   });
@@ -113,17 +130,33 @@ describe('RegisterComponent', () => {
   });
 
   describe('onSubmit', () => {
-    it('should not log when the form is invalid', () => {
-      const consoleSpy = vi.spyOn(console, 'log');
+    it('should not dispatch when the form is invalid', () => {
+      const dispatchSpy = vi.spyOn(store, 'dispatch');
       component.onSubmit();
-      expect(consoleSpy).not.toHaveBeenCalled();
+      expect(dispatchSpy).not.toHaveBeenCalled();
     });
 
-    it('should allow submit when the form is valid', () => {
+    it('should dispatch Register when the form is valid', () => {
+      const dispatchSpy = vi.spyOn(store, 'dispatch');
       setValue('email', 'user@example.com');
       setValue('password', 'Pass12');
       setValue('confirmPassword', 'Pass12');
-      expect(() => component.onSubmit()).not.toThrow();
+      component.onSubmit();
+      expect(dispatchSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: { email: 'user@example.com', password: 'Pass12', confirmPassword: 'Pass12' },
+        }),
+      );
+    });
+  });
+
+  describe('store signals', () => {
+    it('should reflect loading state from store', () => {
+      expect(component.loading()).toBe(false);
+    });
+
+    it('should reflect error state from store', () => {
+      expect(component.error()).toBeNull();
     });
   });
 });

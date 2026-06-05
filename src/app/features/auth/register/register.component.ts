@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   FormBuilder,
@@ -7,11 +8,15 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { Store } from '@ngxs/store';
+import { filter, take } from 'rxjs';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { Register } from '../../../store/auth/auth.actions';
+import { AuthState } from '../../../store/auth/auth.state';
 
 const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
 
@@ -45,6 +50,16 @@ function passwordMatchValidator(
 })
 export class RegisterComponent {
   readonly registerForm: FormGroup;
+  readonly loading = toSignal(inject(Store).select(AuthState.loading), {
+    initialValue: false,
+  });
+  readonly error = toSignal(inject(Store).select(AuthState.error), {
+    initialValue: null,
+  });
+
+  private readonly store = inject(Store);
+  private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(private readonly fb: FormBuilder) {
     this.registerForm = this.fb.nonNullable.group(
@@ -62,6 +77,15 @@ export class RegisterComponent {
       },
       { validators: passwordMatchValidator },
     );
+
+    this.store
+      .select(AuthState.isAuthenticated)
+      .pipe(
+        filter(Boolean),
+        take(1),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(() => this.router.navigate(['/dashboard']));
   }
 
   get f() {
@@ -72,6 +96,6 @@ export class RegisterComponent {
     if (this.registerForm.invalid) {
       return;
     }
-    // TODO: Dispatch action in next phase
+    this.store.dispatch(new Register(this.registerForm.getRawValue()));
   }
 }
