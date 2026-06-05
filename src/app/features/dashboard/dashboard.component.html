@@ -1,0 +1,230 @@
+<div style="display: flex; height: 100%; width: 100%">
+  <p-splitter
+    layout="horizontal"
+    [style]="{ height: '100%', flex: '1', minWidth: 0 }"
+    [panelSizes]="[20, 80]"
+    [minSizes]="[15, 40]"
+  >
+    <!-- LEFT SIDEBAR — status filters, categories, tags, and nav links -->
+    <ng-template pTemplate="panel">
+      <div style="height: 100%; overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none">
+        <div
+          style="
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            min-height: 100%;
+          "
+        >
+          <!-- Header -->
+          <div style="display: flex; align-items: center; gap: 0.5rem">
+            <i
+              class="pi pi-check-square"
+              style="font-size: 1.25rem; color: var(--p-primary-color)"
+            ></i>
+            <span style="font-size: 1.05rem; font-weight: 600">TodoList</span>
+            <div style="margin-left: auto">
+              <p-button
+                icon="pi pi-sign-out"
+                [link]="true"
+                severity="secondary"
+                (click)="logout()"
+              />
+            </div>
+          </div>
+
+          <!-- Status Section -->
+          <div style="display: flex; flex-direction: column; gap: 0.15rem">
+            <span
+              style="
+                font-size: 0.7rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                color: var(--p-text-secondary-color);
+                padding: 0 0.5rem 0.15rem;
+              "
+              >Status</span
+            >
+            @for (item of statusItems; track item.status) {
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 0.5rem;
+                  padding: 0.3rem 0.5rem;
+                  border-radius: var(--p-border-radius);
+                  cursor: default;
+                "
+              >
+                <i
+                  [class]="'pi ' + (item.status | taskStatusIcon)"
+                  style="font-size: 0.875rem; color: var(--p-text-secondary-color)"
+                ></i>
+                <span style="flex: 1; font-size: 0.8125rem">{{
+                  item.status | taskStatusLabel
+                }}</span>
+                <p-badge [value]="item.count" severity="secondary" />
+              </div>
+            }
+          </div>
+
+          <!-- Categories Section -->
+          <div style="display: flex; flex-direction: column; gap: 0.15rem">
+            <span
+              style="
+                font-size: 0.7rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                color: var(--p-text-secondary-color);
+                padding: 0 0.5rem 0.15rem;
+              "
+              >Categories</span
+            >
+            @for (cat of categories; track cat.id) {
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 0.5rem;
+                  padding: 0.2rem 0.5rem;
+                  border-radius: var(--p-border-radius);
+                  cursor: default;
+                "
+              >
+                <span style="flex: 1; font-size: 0.8125rem">{{ cat.name }}</span>
+                <span style="font-size: 0.75rem; color: var(--p-text-secondary-color)">{{
+                  cat.count
+                }}</span>
+              </div>
+            }
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.2rem 0.5rem;
+                cursor: default;
+              "
+            >
+              <i class="pi pi-plus" style="font-size: 0.65rem; color: var(--p-primary-color)"></i>
+              <span style="font-size: 0.8125rem; color: var(--p-primary-color)"
+                >Add New Category</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- CENTER PANEL — task list with inline metadata (status tag, due date, subtask count) -->
+    <ng-template pTemplate="panel">
+      <p-scrollPanel style="height: 100%">
+        <div style="padding: 1.5rem; display: flex; flex-direction: column; gap: 1.25rem">
+          <!-- Header with count -->
+          <div style="display: flex; align-items: center; justify-content: space-between">
+            <div style="display: flex; align-items: center; gap: 0.75rem">
+              <span style="font-size: 1.5rem; font-weight: 600">All Tasks</span>
+              <p-badge [value]="tasks.length" severity="secondary" />
+            </div>
+          </div>
+
+          <!-- Add Task Trigger -->
+          <div style="display: flex">
+            <p-button label="New Task" icon="pi pi-plus" (click)="openNewTaskPanel()" />
+          </div>
+
+          <!-- Task List -->
+          <div style="display: flex; flex-direction: column">
+            @for (task of tasks; track task.id) {
+              <div class="task-row" (click)="editTask(task)">
+                <!-- Title row -->
+                <div style="display: flex; align-items: center; justify-content: space-between">
+                  <div style="display: flex; align-items: center; gap: 0.5rem">
+                    <span style="font-size: 1rem; font-weight: 500">{{ task.title }}</span>
+                    <p-tag
+                      [value]="task.status | taskStatusLabel"
+                      [severity]="task.status | taskStatusSeverity"
+                      style="font-size: 0.75rem"
+                    />
+                  </div>
+                  <p-button icon="pi pi-ellipsis-v" [link]="true" severity="secondary" />
+                </div>
+                <!-- Metadata row -->
+                <div style="display: flex; align-items: center; gap: 1rem; margin-top: 0.625rem">
+                  @if (task.dueDate) {
+                    <div style="display: flex; align-items: center; gap: 0.375rem">
+                      <i
+                        class="pi pi-calendar"
+                        style="font-size: 0.8125rem; color: var(--p-text-secondary-color)"
+                      ></i>
+                      <span style="font-size: 0.8125rem; color: var(--p-text-secondary-color)">{{
+                        task.dueDate | date: 'MMM d, yyyy'
+                      }}</span>
+                    </div>
+                  }
+                  <p-tag
+                    [value]="task.subTasks.length + ' subtasks'"
+                    severity="info"
+                    style="font-size: 0.75rem"
+                  />
+                  @if (task.categoryName) {
+                    <p-tag [value]="task.categoryName" style="font-size: 0.75rem" />
+                  }
+                </div>
+              </div>
+              @if (!$last) {
+                <p-divider style="margin: 0" />
+              }
+            }
+          </div>
+        </div>
+      </p-scrollPanel>
+    </ng-template>
+  </p-splitter>
+
+  <!-- RIGHT PANEL — slide-in task form (create/edit). Dumb component, all events bubble up via @Output -->
+  @if (showRightPanel) {
+    <task-detail-panel
+      [visible]="showRightPanel"
+      [task]="editingTask"
+      [statusOptions]="statusOptions"
+      [categoryOptions]="categoryOptions"
+      [tagOptions]="tagOptions"
+      (close)="closeRightPanel()"
+      (save)="onSaveTask($event)"
+      (deleteTask)="onDeleteTask($event)"
+    />
+  }
+</div>
+
+<p-confirmDialog />
+
+<!-- Structural dialog placeholders — hidden until the corresponding feature logic is implemented -->
+<p-dialog header="Add Task" [visible]="false" [modal]="true" [style]="{ width: '32rem' }">
+  <div style="display: flex; flex-direction: column; gap: 1rem">
+    <input pInputText [fluid]="true" placeholder="Task title" />
+    <textarea pTextarea [fluid]="true" rows="3" placeholder="Description"></textarea>
+    <p-select
+      [options]="statusOptions"
+      optionLabel="label"
+      optionValue="value"
+      placeholder="Select list"
+      [fluid]="true"
+    />
+  </div>
+</p-dialog>
+
+<p-dialog header="Add Category" [visible]="false" [modal]="true" [style]="{ width: '28rem' }">
+  <div style="display: flex; flex-direction: column; gap: 1rem">
+    <input pInputText [fluid]="true" placeholder="Category name" />
+  </div>
+</p-dialog>
+
+<p-dialog header="Add Tag" [visible]="false" [modal]="true" [style]="{ width: '28rem' }">
+  <div style="display: flex; flex-direction: column; gap: 1rem">
+    <input pInputText [fluid]="true" placeholder="Tag name" />
+  </div>
+</p-dialog>

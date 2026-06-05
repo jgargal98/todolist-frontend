@@ -1,0 +1,20 @@
+import { Pipe, PipeTransform } from '@angular/core';
+import { TaskStatus } from '../enums/task-status.enum';
+
+@Pipe({
+  name: 'taskStatusSeverity',
+  standalone: true,
+})
+// Maps TaskStatus to PrimeNG tag severity (controls badge/tag color)
+export class TaskStatusSeverityPipe implements PipeTransform {
+  transform(value: TaskStatus | undefined | null): 'info' | 'success' | 'warn' | 'danger' | 'secondary' | 'contrast' {
+    switch (value) {
+      case TaskStatus.NonStarted: return 'secondary';
+      case TaskStatus.InProgress: return 'info';
+      case TaskStatus.Paused: return 'warn';
+      case TaskStatus.Late: return 'danger';
+      case TaskStatus.Finished: return 'success';
+      default: return 'secondary';
+    }
+  }
+}

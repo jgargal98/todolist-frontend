@@ -1,59 +1,78 @@
-# Frontend
+# Todo List
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.0.
+Angular 21 task management app with PrimeNG and Nora theme. Standalone components, Reactive Forms, feature-based architecture.
 
-## Development server
+## Stack
 
-To start a local development server, run:
+| Layer | Technology |
+|-------|-----------|
+| Framework | Angular 21.1 |
+| UI | PrimeNG 21.1 + PrimeUIX Nora + PrimeIcons |
+| Forms | ReactiveForms (FormGroup + FormArray) |
+| Testing | Vitest 4 |
+| Build | @angular/build 21 |
 
-```bash
-ng serve
+## Architecture
+
+```
+src/
+├── app/
+│   ├── core/                    # Guards, interceptors, NGXS store (empty — ready)
+│   ├── features/
+│   │   ├── auth/
+│   │   │   ├── login/           # LoginComponent
+│   │   │   └── register/        # RegisterComponent
+│   │   └── dashboard/
+│   │       ├── dashboard.component.ts       # Smart component (state + orchestration)
+│   │       └── task-detail-panel/           # Dumb component (form + validation)
+│   └── shared/
+│       ├── enums/
+│       │   └── task-status.enum.ts
+│       ├── models/dto/          # 1:1 interfaces with backend DTOs
+│       └── pipes/               # Presentation pipes (status → label/icon/severity)
+├── styles.css                   # Global reset + @layer primeng
+└── main.ts                      # bootstrapApplication
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Smart / Dumb Component Pattern
 
-## Code scaffolding
+- **DashboardComponent** (Smart): owns data, controls panel visibility, orchestrates confirmations with `ConfirmationService`.
+- **TaskDetailPanelComponent** (Dumb): receives data via `@Input()`, emits events via `@Output()`, no external dependencies.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Reactive Forms
 
-```bash
-ng generate component component-name
-```
+- `FormGroup` with synchronous validators (`required`, `maxlength`, `futureDate`).
+- `FormArray` for dynamic subtasks (add / remove).
+- Error messages use PrimeNG semantic class `.p-error`.
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Tests
 
-```bash
-ng generate --help
-```
+**75 tests / 4 files — all green.**
 
-## Building
+| File | Tests |
+|------|-------|
+| `app.spec.ts` | 2 |
+| `login.component.spec.ts` | 17 |
+| `register.component.spec.ts` | 17 |
+| `task-detail-panel.component.spec.ts` | 39 |
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Commands
 
 ```bash
-ng test
+ng serve          # Dev server (http://localhost:4200)
+ng build          # Production build → dist/
+ng test           # Unit tests (Vitest)
 ```
 
-## Running end-to-end tests
+## Progress
 
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [x] Dashboard layout with splitter (sidebar + task list + detail panel)
+- [x] Task form with Reactive Forms + full validation
+- [x] Dynamic subtasks with FormArray
+- [x] Backend DTOs replicated in TypeScript
+- [x] Presentation pipes (status → label / icon / severity)
+- [x] Delete confirmation with p-confirmDialog
+- [x] Login and Register centered layout
+- [x] 75 unit tests passing
+- [ ] API REST connection (NGXS store + HTTP services)
+- [ ] JWT authentication

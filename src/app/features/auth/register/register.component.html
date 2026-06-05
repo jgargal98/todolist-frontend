@@ -1,0 +1,104 @@
+<div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%;">
+  <p-card [style]="{ maxWidth: '28rem', width: '100%' }">
+    <ng-template pTemplate="title">
+      <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+        <i class="pi pi-check-square" style="font-size: 1.25rem; color: var(--p-primary-color); margin-bottom: 0.25rem;"></i>
+        <h2 style="margin: 0; font-size: 1.5rem; font-weight: 700;">Create Account</h2>
+      </div>
+      <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; color: var(--p-text-muted-color);">Sign up to get started</p>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" [style]="{ display: 'flex', flexDirection: 'column', gap: '1rem' }">
+        <div [style]="{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }">
+          <label for="email" style="font-weight: 500; font-size: 0.875rem;">Email</label>
+          <input
+            id="email"
+            type="email"
+            pInputText
+            [fluid]="true"
+            formControlName="email"
+            autocomplete="email"
+            placeholder="you@example.com"
+          />
+
+          @if (f['email'].touched && f['email'].invalid) {
+            @if (f['email'].hasError('required')) {
+              <small style="color: var(--p-red-400);">Email is required.</small>
+            }
+            @if (f['email'].hasError('email')) {
+              <small style="color: var(--p-red-400);">Please enter a valid email address.</small>
+            }
+          }
+        </div>
+
+        <div [style]="{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }">
+          <label for="password" style="font-weight: 500; font-size: 0.875rem;">Password</label>
+          <p-password
+            id="password"
+            formControlName="password"
+            [feedback]="false"
+            [toggleMask]="true"
+            [fluid]="true"
+            autocomplete="new-password"
+            placeholder="Min. 6 characters"
+          />
+
+          @if (f['password'].touched && f['password'].invalid) {
+            @if (f['password'].hasError('required')) {
+              <small style="color: var(--p-red-400);">Password is required.</small>
+            }
+            @if (f['password'].hasError('minlength')) {
+              <small style="color: var(--p-red-400);">Password must be at least 6 characters long.</small>
+            }
+            @if (f['password'].hasError('pattern')) {
+              <small style="color: var(--p-red-400);">Password must contain at least one uppercase letter, one lowercase letter, and one digit.</small>
+            }
+          }
+        </div>
+
+        <div [style]="{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }">
+          <label for="confirmPassword" style="font-weight: 500; font-size: 0.875rem;">Confirm Password</label>
+          <p-password
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            [feedback]="false"
+            [toggleMask]="true"
+            [fluid]="true"
+            autocomplete="new-password"
+            placeholder="Re-enter your password"
+          />
+
+          @if (f['confirmPassword'].touched && f['confirmPassword'].invalid) {
+            @if (f['confirmPassword'].hasError('required')) {
+              <small style="color: var(--p-red-400);">Please confirm your password.</small>
+            }
+          }
+
+          @if (registerForm.hasError('passwordMismatch') && f['confirmPassword'].touched && f['confirmPassword'].dirty) {
+            <small style="color: var(--p-red-400);">Passwords do not match.</small>
+          }
+        </div>
+
+        @if (error(); as err) {
+          <small style="color: var(--p-red-400); text-align: center;">{{ err }}</small>
+        }
+
+        <p-button
+          type="submit"
+          [disabled]="registerForm.invalid || loading()"
+          [loading]="loading()"
+          label="Sign Up"
+          [fluid]="true"
+        />
+      </form>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <p style="margin: 0; font-size: 0.875rem; text-align: center;">
+        <span style="color: var(--p-text-muted-color);">Already have an account? </span>
+        <a routerLink="/login" style="color: var(--p-primary-color); font-weight: 700; text-decoration: none;">Sign In</a>
+      </p>
+    </ng-template>
+  </p-card>
+</div>
