@@ -1,3 +1,4 @@
+import { provideHttpClient } from '@angular/common/http';
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideStore } from '@ngxs/store';
@@ -11,6 +12,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideStore(AppStates),
+    provideHttpClient(),
     // PrimeNG theme preset + dark mode via CSS class toggle
     providePrimeNG({
       ripple: true,

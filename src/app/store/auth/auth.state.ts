@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
-import type { UserResponseDto } from '../../shared/models/dto';
+import { catchError, Observable, switchMap } from 'rxjs';
+import { AuthService } from '../../core/services/auth.service';
+import type { AuthResponse, UserResponseDto } from '../../shared/models/dto';
 import {
   Login,
   LoginFailure,
@@ -32,7 +34,7 @@ const defaults: AuthStateModel = {
   error: null,
 };
 
-function toAuthModel(payload: import('../../shared/models/dto').AuthResponse): Partial<AuthStateModel> {
+function toAuthModel(payload: AuthResponse): Partial<AuthStateModel> {
   return {
     user: null,
     accessToken: payload.accessToken,
@@ -49,6 +51,8 @@ function toAuthModel(payload: import('../../shared/models/dto').AuthResponse): P
 })
 @Injectable()
 export class AuthState {
+  constructor(private readonly authService: AuthService) {}
+
   @Selector()
   static user(state: AuthStateModel): UserResponseDto | null {
     return state.user;
@@ -75,8 +79,16 @@ export class AuthState {
   }
 
   @Action(Login)
-  login(ctx: StateContext<AuthStateModel>): void {
+  login(ctx: StateContext<AuthStateModel>, action: Login): Observable<unknown> {
     ctx.patchState({ loading: true, error: null });
+    return this.authService.login(action.payload).pipe(
+      switchMap((response) => ctx.dispatch(new LoginSuccess(response))),
+      catchError((err: unknown) => {
+        const message =
+          err instanceof Error ? err.message : 'Login failed';
+        return ctx.dispatch(new LoginFailure({ error: message }));
+      }),
+    );
   }
 
   @Action(LoginSuccess)
@@ -90,8 +102,16 @@ export class AuthState {
   }
 
   @Action(Register)
-  register(ctx: StateContext<AuthStateModel>): void {
+  register(ctx: StateContext<AuthStateModel>, action: Register): Observable<unknown> {
     ctx.patchState({ loading: true, error: null });
+    return this.authService.register(action.payload).pipe(
+      switchMap((response) => ctx.dispatch(new RegisterSuccess(response))),
+      catchError((err: unknown) => {
+        const message =
+          err instanceof Error ? err.message : 'Registration failed';
+        return ctx.dispatch(new RegisterFailure({ error: message }));
+      }),
+    );
   }
 
   @Action(RegisterSuccess)
@@ -110,8 +130,12 @@ export class AuthState {
   }
 
   @Action(RefreshToken)
-  refreshToken(ctx: StateContext<AuthStateModel>): void {
+  refreshToken(ctx: StateContext<AuthStateModel>, action: RefreshToken): Observable<unknown> {
     ctx.patchState({ loading: true });
+    return this.authService.refreshToken(action.payload).pipe(
+      switchMap((response) => ctx.dispatch(new RefreshTokenSuccess(response))),
+      catchError(() => ctx.dispatch(new RefreshTokenFailure())),
+    );
   }
 
   @Action(RefreshTokenSuccess)
